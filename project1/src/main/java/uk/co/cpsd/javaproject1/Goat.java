@@ -4,10 +4,14 @@ import java.awt.Color;
 
 public class Goat extends Animal {
     
-    public Goat(int x,int y){
-        super(x,y,10);
+    public Goat(int x,int y,int id){
+        super(x,y,10,id);
     }
 
+    public void eatGrass(){
+        this.energyLevel+=5;
+        System.out.println("Goat " + id + " at (" + x + "," + y + ") ate grass. Energy: " + energyLevel);
+    }
     @Override
     public void move(int worldSize){
         int dx= (int) (Math.random()*3)-1;
