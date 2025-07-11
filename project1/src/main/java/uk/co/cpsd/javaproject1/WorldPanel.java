@@ -3,15 +3,17 @@ package uk.co.cpsd.javaproject1;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Font;
 
 import javax.swing.JPanel;
 
 public class WorldPanel extends JPanel {
     private final World world;
-
+    private final Font font;
     public WorldPanel(World world) {
         this.world = world;
         setPreferredSize(new Dimension(500, 500));
+        this.font=new Font("Arial", Font.BOLD, 18);
     }
 
     @Override
@@ -35,10 +37,25 @@ public class WorldPanel extends JPanel {
             }
         }
         
+        
         world.animals().forEach(animal->{
             
             g.setColor(animal.getColor());
             g.fillRect(animal.getX() * cellSize+10, animal.getY() * cellSize+10, cellSize-15,cellSize-15);
+
+            g.setColor(Color.BLACK);
+            
+            g.setFont(font);
+
+            // Calculate text position to try and center it within the animal's drawn area
+            String idText = String.valueOf(animal.getId());
+            int textWidth = g.getFontMetrics().stringWidth(idText);
+            int textHeight = g.getFontMetrics().getHeight();
+            System.out.println("This is animal id: "+idText);
+            int textX = animal.getX() * cellSize + (cellSize / 2) - (textWidth / 2);
+            int textY = animal.getY() * cellSize + (cellSize / 2) + (textHeight / 4);
+
+            g.drawString(idText, textX, textY);
         });
     }
 }

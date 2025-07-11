@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class World {
-     public final int size = 10;
-    private final boolean[][] grass = new boolean[size][size];
-    private final List<Animal> animals;
+    public final int size = 10;
+    private List<Animal> animals;
+    private int totalTicks;
+    private final int MAX_GRASS_AGE=25;
+    private int[][] grassDeathTime= new int[size][size]; 
 
     public World(int numOfGoats){
         animals=new ArrayList<>();
@@ -16,29 +18,34 @@ public class World {
         }
     }
 
+    public boolean hasGrass(int x , int y){
+        return grassDeathTime[x][y]>totalTicks;
+    }
 
-    public void growGrass() {
+    public void growGrass(){
         int x = (int)(Math.random() * size);
         int y = (int)(Math.random() * size);
-        grass[x][y] = true;
+        if(!hasGrass(x, y)){
+            grassDeathTime[x][y]=totalTicks+MAX_GRASS_AGE;
+        }
     }
 
-    public boolean hasGrass(int x, int y) {
-        return grass[x][y];
-    }
-
-    public void removeGrass(int x, int y) {
-        grass[x][y] = false;
+    public void removeGrass(int x, int y){
+        grassDeathTime[x][y]=0;
     }
 
     public Stream<Animal> animals(){
         return animals.stream();
     }
+
+
     public void tick() {
         growGrass();
+        
     }
 
     public void moveAnimals(){
-        animals.forEach(animal-> animal.move(size));
+        animals.forEach(animal-> animal.act(this));
+
     }
 }
