@@ -10,7 +10,7 @@ public class World {
     private int totalTicks;
     private final int MAX_GRASS_AGE=25;
     private int[][] grassDeathTime= new int[size][size]; 
-
+    private List<Animal> deadAnimals=new ArrayList<>();
     public World(int numOfGoats){
         animals=new ArrayList<>();
         for(int i=0;i<numOfGoats;i++){
@@ -21,7 +21,25 @@ public class World {
     public boolean hasGrass(int x , int y){
         return grassDeathTime[x][y]>totalTicks;
     }
+    public int findNumOfGoats(){
+        return (int) animals.stream().filter(animal-> animal instanceof Goat).count();
+    }
 
+    public int findNumOfGrass(){
+        int numOfGrass=0;
+        for(int i=0;i<size;i++){
+            for(int j=0;j<size;j++){
+                if(grassDeathTime[i][j]>totalTicks){
+                    numOfGrass++;
+                }
+            }
+        }
+        return numOfGrass;
+    }
+
+    public int getSecondsElapsed(){
+        return totalTicks;
+    }
     public void growGrass(){
         int x = (int)(Math.random() * size);
         int y = (int)(Math.random() * size);
@@ -40,9 +58,20 @@ public class World {
 
 
     public void tick() {
+        totalTicks++;
         growGrass();
         
+
+        for(Animal animal:animals){
+            boolean isDead= animal.decreaseEnergy(totalTicks);
+            if(isDead){
+                deadAnimals.add(animal);
+            }
+        }
+        animals.removeAll(deadAnimals);
     }
+
+    
 
     public void moveAnimals(){
         animals.forEach(animal-> animal.act(this));
