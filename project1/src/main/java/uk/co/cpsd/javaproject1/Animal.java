@@ -10,6 +10,7 @@ public abstract class Animal {
     protected int energyLevel;
     protected int animalId;
     private static final AtomicInteger idCounter=new AtomicInteger(0);
+    protected int lastEnergyDecreaseTick=0;
 
     public Animal(int x,int y, int energyLevel){
         this.x=x;
@@ -20,6 +21,10 @@ public abstract class Animal {
 
     public abstract void move(int worldSize);
 
+    public boolean decreaseEnergy(int currentTime){
+        return energyLevel<=0 ? true :false;
+    }
+    
     public abstract Color getColor();
 
     public int getX(){

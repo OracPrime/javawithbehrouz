@@ -12,7 +12,7 @@ public class WorldPanel extends JPanel {
     private final Font font;
     public WorldPanel(World world) {
         this.world = world;
-        setPreferredSize(new Dimension(500, 500));
+        setPreferredSize(new Dimension(600, 650));
         this.font=new Font("Arial", Font.BOLD, 18);
     }
 
@@ -57,5 +57,12 @@ public class WorldPanel extends JPanel {
 
             g.drawString(idText, textX, textY);
         });
+
+        int scoreY= world.size*cellSize+25;
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial",Font.PLAIN,16));
+        String statement= "Seconds elapsed: "+ world.getSecondsElapsed()+ " Num of Goats is:  "+world.findNumOfGoats()+" Num of Grass: "+world.findNumOfGrass();
+        g.drawString(statement, cellSize, scoreY);
+
     }
 }
