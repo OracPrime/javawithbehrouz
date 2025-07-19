@@ -18,10 +18,14 @@ public class World {
     private List<Integer> goatPopulationHistory = new ArrayList<>();
     private List<Integer> grassPopulationHistory = new ArrayList<>();
 
-    public World(int numOfGoats) {
+    public World(int numOfGoats, int numOfLions) {
         animals = new ArrayList<>();
         for (int i = 0; i < numOfGoats; i++) {
             animals.add(new Goat((int) (Math.random() * size), (int) (Math.random() * size)));
+        }
+
+        for (int j = 0; j < numOfLions; j++) {
+            animals.add(new Lion((int) Math.random() * size, (int) Math.random() * size));
         }
     }
 

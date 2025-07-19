@@ -22,14 +22,17 @@ public class Main {
             System.out.println("How many goats do you want to be in simulation?");
             int numOfGoats = userInput.nextInt();
 
+            System.out.println("How many lions do you want to be in simulation?");
+            int numOfLions = userInput.nextInt();
+
             userInput.close();
 
             if (typeOfSimulation == 1) {
-                SimulatorRunner.noGUISimulation(timeOfSimulation, 20);
+                SimulatorRunner.noGUISimulation(timeOfSimulation, numOfGoats, numOfLions);
             } else if (typeOfSimulation == 2) {
                 SwingUtilities.invokeLater(() -> {
                     @SuppressWarnings("unused")
-                    SimulatorFrame frame = new SimulatorFrame(timeOfSimulation, numOfGoats);
+                    SimulatorFrame frame = new SimulatorFrame(timeOfSimulation, numOfGoats, numOfLions);
 
                 });
             }

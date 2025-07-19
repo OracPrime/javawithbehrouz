@@ -11,8 +11,8 @@ public class SimulatorFrame extends JFrame {
     private WorldPanel worldPanel;
     private Timer timer;
 
-    public SimulatorFrame(int tickLimitSimulation, int numOfGoats) {
-        world = new World(numOfGoats);
+    public SimulatorFrame(int tickLimitSimulation, int numOfGoats, int numOfLions) {
+        world = new World(numOfGoats, numOfLions);
 
         worldPanel = new WorldPanel(world);
         add(worldPanel);
