@@ -54,9 +54,16 @@ public class Lion extends Animal {
             }
         }
 
-        // 4. Default: Random move
-        Point randomMove = findRandomPos(scanedNeighbourHoodByGoat);
-        return new DecisionInfo(DecisionType.WANDER, randomMove);
+        // 3. Default: Stay in place or Random move
+        boolean moveChance = Math.random() < 0.25;
+        if (moveChance) {
+            Point randomMove = findRandomPos(scanedNeighbourHoodByGoat);
+            return new DecisionInfo(DecisionType.WANDER, randomMove);
+        } else {
+            Point sameLocation = new Point(getX(), getY());
+            return new DecisionInfo(DecisionType.WANDER, sameLocation);
+        }
+
     }
 
     public Point findRandomPos(Map<Point, List<Object>> neighbourHoodPos) {
@@ -128,7 +135,13 @@ public class Lion extends Animal {
             }
             case WANDER -> {
                 Point randomMove = decisionInfo.getNextPos();
-                setPosition(randomMove, 1);
+                if (randomMove.x == getX() && randomMove.y == getY()) {
+                    setPosition(randomMove, 0);
+                    System.out.println("Stay at same location===========================");
+                } else {
+                    setPosition(randomMove, 1);
+                }
+
             }
 
         }

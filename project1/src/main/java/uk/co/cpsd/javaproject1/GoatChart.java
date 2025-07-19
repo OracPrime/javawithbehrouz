@@ -14,19 +14,19 @@ import java.util.List;
 
 public class GoatChart extends JFrame {
 
-    public GoatChart(List<Integer> goatCounts, List<Integer> grassCounts) {
+    public GoatChart(List<Integer> goatCounts, List<Integer> grassCounts, List<Integer> lionCounts) {
 
         try {
             setTitle("Population Over Time");
-            setSize(700, 450);
+            setSize(700, 550);
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
             for (int tick = 0; tick < goatCounts.size(); tick++) {
                 dataset.addValue(goatCounts.get(tick), "Goats", String.valueOf(tick));
                 dataset.addValue(grassCounts.get(tick), "Grass", String.valueOf(tick));
+                dataset.addValue(lionCounts.get(tick), "Lions", String.valueOf(tick));
             }
 
             JFreeChart chart = ChartFactory.createLineChart(

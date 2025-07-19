@@ -17,6 +17,7 @@ public class World {
     private int[][] grassDeathTime = new int[size][size];
     private List<Integer> goatPopulationHistory = new ArrayList<>();
     private List<Integer> grassPopulationHistory = new ArrayList<>();
+    private List<Integer> lionPopulationHistory = new ArrayList<>();
 
     public World(int numOfGoats, int numOfLions) {
         animals = new ArrayList<>();
@@ -33,6 +34,10 @@ public class World {
         return goatPopulationHistory;
     }
 
+    public List<Integer> getLionPopulationHistory() {
+        return lionPopulationHistory;
+    }
+
     public List<Integer> getGrassPopulationHistory() {
         return grassPopulationHistory;
     }
@@ -45,7 +50,7 @@ public class World {
         return (int) animals.stream().filter(animal -> animal instanceof Goat).count();
     }
 
-    public int findNumLions() {
+    public int findNumOfLions() {
         return (int) animals.stream().filter(animal -> animal instanceof Lion).count();
     }
 
@@ -118,6 +123,7 @@ public class World {
 
         goatPopulationHistory.add(findNumOfGoats());
         grassPopulationHistory.add(findNumOfGrass());
+        lionPopulationHistory.add(findNumOfLions());
         List<Animal> deadAnimals = new ArrayList<>();
         for (Animal animal : animals) {
             animal.increaseAge();

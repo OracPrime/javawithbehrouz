@@ -9,7 +9,8 @@ public class SimulatorRunner {
         }
 
         world.writeToCSV(world.getGoatPopulationHistory(), world.getGrassPopulationHistory());
-        GoatChart chart = new GoatChart(world.getGoatPopulationHistory(), world.getGrassPopulationHistory());
+        GoatChart chart = new GoatChart(world.getGoatPopulationHistory(), world.getGrassPopulationHistory(),
+                world.getLionPopulationHistory());
         chart.setVisible(true);
     }
 

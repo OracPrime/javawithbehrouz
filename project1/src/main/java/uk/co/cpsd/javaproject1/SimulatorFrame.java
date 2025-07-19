@@ -33,7 +33,7 @@ public class SimulatorFrame extends JFrame {
 
                 SwingUtilities.invokeLater(() -> {
                     GoatChart chart = new GoatChart(world.getGoatPopulationHistory(),
-                            world.getGrassPopulationHistory());
+                            world.getGrassPopulationHistory(), world.getLionPopulationHistory());
                     chart.setVisible(true);
                 });
             }
