@@ -24,7 +24,7 @@ public abstract class Animal {
     }
 
     public void increaseAge() {
-        System.out.println("animal by id" + this.animalId + " is age:" + getAge());
+        // System.out.println("animal by id" + this.animalId + " is age:" + getAge());
         this.age++;
     }
 
@@ -46,7 +46,7 @@ public abstract class Animal {
 
     public abstract void move(int worldSize);
 
-    public boolean decreaseEnergy(int currentTime) {
+    public boolean isEnergyZero(int currentTime) {
         return energyLevel <= 0 ? true : false;
     }
 
@@ -78,7 +78,8 @@ public abstract class Animal {
 
     public abstract DecisionInfo animalDecisionMaking(World world);
 
-    public void setPosition(Point point) {
+    public void setPosition(Point point, int cost) {
+        setPositionCost(cost);
         this.x = point.x;
         this.y = point.y;
     }
@@ -133,4 +134,8 @@ public abstract class Animal {
     protected abstract Animal createBaby(int x, int y);
 
     protected abstract int getReproductionCooldown(Gender gender);
+
+    public void setPositionCost(int cost) {
+        energyLevel = energyLevel - cost;
+    };
 }
