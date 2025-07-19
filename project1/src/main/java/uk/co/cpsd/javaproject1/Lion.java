@@ -12,6 +12,8 @@ import uk.co.cpsd.javaproject1.DecisionInfo.DecisionType;
 public class Lion extends Animal {
 
     private int lastReproductionTick = -8;
+    public final int HUNGER_TRESHHOLDS = 50;
+    private static final int Lion_MAX_AGE = 60;
 
     public Lion(int x, int y) {
         super(x, y, 20);
@@ -19,7 +21,7 @@ public class Lion extends Animal {
 
     @Override
     public boolean isHungry() {
-        return energyLevel <= 20;
+        return energyLevel <= HUNGER_TRESHHOLDS;
     }
 
     @Override
@@ -77,6 +79,66 @@ public class Lion extends Animal {
         boolean canReproduce = oppositeGender && pairsHaveEenergy && sinceLastReproduce;
         return canReproduce;
 
+    }
+
+    @Override
+    public Animal reproduceWith(Animal partner, int currentTick) {
+        Lion LionPartner = (Lion) partner;
+        this.lastReproductionTick = currentTick;
+        LionPartner.lastReproductionTick = currentTick;
+        this.energyLevel = this.getGender() == Gender.FEMALE ? energyLevel - 10 : energyLevel - 8;
+        partner.energyLevel = partner.getGender() == Gender.FEMALE ? energyLevel - 10 : energyLevel - 8;
+
+        Lion babyLion = new Lion(getX(), getY());
+        babyLion.energyLevel = 15;
+        System.out.println("===============Baby Lion was born==================");
+
+        return babyLion;
+    }
+
+    public void eatGoat() {
+        this.energyLevel += 20;
+        System.out.println("\\\\\\\\\\\\Goat was eaten///////////");
+    }
+
+    @Override
+    public void act(World world, List<Animal> babyAnimalHolder, List<Animal> removedAnimalsHolder) {
+        DecisionInfo decisionInfo = animalDecisionMaking(world);
+        Point target = decisionInfo.getNextPos();
+
+        switch (decisionInfo.getType()) {
+            case EAT -> {
+                if (world.getAnimalAt(target.x, target.y) instanceof Goat) {
+                    eatGoat();
+                    world.removeAnimal(target.x, target.y, removedAnimalsHolder);
+                    setPosition(target, 5);
+                }
+            }
+            case REPRODUCE -> {
+                Point partnerlocation = decisionInfo.getNextPos();
+                Animal partnerLion = world
+                        .getAnimalAt(partnerlocation.x, partnerlocation.y);
+
+                if (partnerLion instanceof Lion otherLion && this.canReproduceWith(otherLion, world.getTotalTicks())) {
+                    Animal babyLion = this.reproduceWith(otherLion, world.getTotalTicks());
+                    babyAnimalHolder.add(babyLion);
+                    System.out.println("===============Lion was born ===============");
+                }
+            }
+            case FLEE -> {
+                Point safeRandomPoint = decisionInfo.getNextPos();
+                setPosition(safeRandomPoint, 5);
+            }
+            case WANDER -> {
+                Point randomMove = decisionInfo.getNextPos();
+                setPosition(randomMove, 1);
+            }
+
+        }
+    }
+
+    public boolean isTooOld() {
+        return this.getAge() > Lion_MAX_AGE;
     }
 
 }
