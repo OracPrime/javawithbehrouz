@@ -28,29 +28,9 @@ public class Goat extends Animal {
     }
 
     @Override
-    public void move(int worldSize) {
-        int dx = (int) (Math.random() * 3) - 1;
-        int dy = (int) (Math.random() * 3) - 1;
-
-        x = Math.max(0, Math.min(worldSize - 1, x + dx));
-        y = Math.max(0, Math.min(worldSize - 1, y + dy));
-    }
-
-    @Override
     public Color getColor() {
         return Color.RED;
     }
-
-    // @Override
-    // public boolean isEnergyZero(int currentTick) {
-
-    // if (currentTick - lastEnergyDecreaseTick >= ENERGY_DECREASE_INTERVAL) {
-    // energyLevel -= 2;
-    // lastEnergyDecreaseTick = currentTick;
-    // return energyLevel <= 0;
-    // }
-    // return false;
-    // }
 
     @Override
     public boolean isHungry() {
