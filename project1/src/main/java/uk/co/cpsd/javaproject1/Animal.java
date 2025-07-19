@@ -14,12 +14,22 @@ public abstract class Animal {
     private static final AtomicInteger idCounter = new AtomicInteger(0);
     protected int lastEnergyDecreaseTick = 0;
     protected int lastReproductionTick = -1;
+    private int age = 0;
 
     private Gender gender;
 
     public enum Gender {
         MALE,
         FEMALE
+    }
+
+    public void increaseAge() {
+        System.out.println("animal by id" + this.animalId + " is age:" + getAge());
+        this.age++;
+    }
+
+    public int getAge() {
+        return age;
     }
 
     public Animal(int x, int y, int energyLevel) {

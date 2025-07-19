@@ -15,6 +15,7 @@ public class Goat extends Animal {
 
     public final int ENERGY_DECREASE_INTERVAL = 5;
     public final int HUNGER_TRESHHOLDS = 50;
+    public final int GOAT_MAX_AGE = 60;
 
     public Goat(int x, int y) {
         super(x, y, 10);
@@ -164,4 +165,9 @@ public class Goat extends Animal {
     public int getReproductionCooldown(Gender gender) {
         return gender == Gender.FEMALE ? 4 : 2;
     }
+
+    public boolean isTooOld() {
+        return this.getAge() > GOAT_MAX_AGE;
+    }
+
 }
