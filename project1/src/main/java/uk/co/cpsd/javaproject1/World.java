@@ -45,6 +45,10 @@ public class World {
         return (int) animals.stream().filter(animal -> animal instanceof Goat).count();
     }
 
+    public int findNumLions() {
+        return (int) animals.stream().filter(animal -> animal instanceof Lion).count();
+    }
+
     public List<Animal> getAnimals() {
         return animals;
     }
@@ -106,6 +110,7 @@ public class World {
 
     public void tick() {
         List<Animal> babyAnimalHolder = new ArrayList<>();
+        List<Animal> removedAnimalsHolder = new ArrayList<>();
         totalTicks++;
         for (int i = 0; i < 10; i++) {
             growGrass();
@@ -117,17 +122,16 @@ public class World {
         for (Animal animal : animals) {
             animal.increaseAge();
 
-            if (animal instanceof Goat goat && goat.isTooOld()) {
-                deadAnimals.add(goat);
-            }
+            boolean isTooOld = animal.isTooOld();
             boolean isDead = animal.isEnergyZero(totalTicks);
-            if (isDead) {
+            if (isDead || isTooOld) {
                 deadAnimals.add(animal);
             }
-            animal.act(this, babyAnimalHolder);
+            animal.act(this, babyAnimalHolder, removedAnimalsHolder);
         }
         animals.addAll(babyAnimalHolder);
         animals.removeAll(deadAnimals);
+        animals.removeAll(removedAnimalsHolder);
     }
 
     public Map<Point, List<Object>> scanNeighbour(int x, int y) {
@@ -150,7 +154,7 @@ public class World {
                 }
 
                 Animal animalAtPos = getAnimalAt(nx, ny);
-                if (animalAtPos != null && animalAtPos instanceof Goat) {
+                if (animalAtPos != null) {
                     infoOfPosition.add(animalAtPos);
 
                 }
@@ -173,6 +177,11 @@ public class World {
             }
         }
         return null;
+    }
+
+    public void removeAnimal(int x, int y, List<Animal> removedAnimalsHolder) {
+        Animal animal = getAnimalAt(x, y);
+        removedAnimalsHolder.add(animal);
     }
 
 }
