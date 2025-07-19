@@ -44,14 +44,8 @@ public abstract class Animal {
         return gender;
     }
 
-    public abstract void move(int worldSize);
-
     public boolean isEnergyZero(int currentTime) {
         return energyLevel <= 0 ? true : false;
-    }
-
-    public void decreaseEnergyBy(int amount) {
-        this.energyLevel -= amount;
     }
 
     public abstract Color getColor();
