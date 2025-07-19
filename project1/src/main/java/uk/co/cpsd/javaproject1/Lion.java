@@ -91,14 +91,12 @@ public class Lion extends Animal {
 
         Lion babyLion = new Lion(getX(), getY());
         babyLion.energyLevel = 15;
-        System.out.println("===============Baby Lion was born==================");
 
         return babyLion;
     }
 
     public void eatGoat() {
         this.energyLevel += 20;
-        System.out.println("\\\\\\\\\\\\Goat was eaten///////////");
     }
 
     @Override
@@ -122,7 +120,6 @@ public class Lion extends Animal {
                 if (partnerLion instanceof Lion otherLion && this.canReproduceWith(otherLion, world.getTotalTicks())) {
                     Animal babyLion = this.reproduceWith(otherLion, world.getTotalTicks());
                     babyAnimalHolder.add(babyLion);
-                    System.out.println("===============Lion was born ===============");
                 }
             }
             case FLEE -> {
