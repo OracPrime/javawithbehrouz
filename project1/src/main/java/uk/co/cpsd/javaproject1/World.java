@@ -116,7 +116,7 @@ public class World {
             if (animal instanceof Goat goat && goat.isTooOld()) {
                 deadAnimals.add(goat);
             }
-            boolean isDead = animal.decreaseEnergy(totalTicks);
+            boolean isDead = animal.isEnergyZero(totalTicks);
             if (isDead) {
                 deadAnimals.add(animal);
             }
