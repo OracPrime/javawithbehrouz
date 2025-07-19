@@ -62,7 +62,7 @@ public abstract class Animal {
         return animalId;
     }
 
-    public abstract void act(World world, List<Animal> babyAnimalHolder);
+    public abstract void act(World world, List<Animal> babyAnimalHolder, List<Animal> removedAnimalsHolder);
 
     public int getEnergy() {
         return energyLevel;
@@ -136,4 +136,6 @@ public abstract class Animal {
     public void setPositionCost(int cost) {
         energyLevel = energyLevel - cost;
     };
+
+    public abstract boolean isTooOld();
 }
