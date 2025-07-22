@@ -3,18 +3,39 @@ package uk.co.cpsd.javaproject1;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Font;
 
+import java.net.URL;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 public class WorldPanel extends JPanel {
     private final World world;
     private final Font font;
 
+    private final Image goatImage;
+    private final Image lionImage;
+
     public WorldPanel(World world) {
         this.world = world;
         setPreferredSize(new Dimension(700, 750));
         this.font = new Font("Arial", Font.PLAIN, 15);
+        // Load goat image safely
+        URL goatURL = getClass().getResource("/goat.png");
+
+        if (goatURL == null) {
+            throw new RuntimeException("Could not load goat.png");
+        }
+        this.goatImage = new ImageIcon(goatURL).getImage();
+
+        // Load lion image safely
+        URL lionURL = getClass().getResource("/bigCat.png");
+        if (lionURL == null) {
+            throw new RuntimeException("Could not load lion.png");
+        }
+        this.lionImage = new ImageIcon(lionURL).getImage();
+
     }
 
     @Override
@@ -40,8 +61,17 @@ public class WorldPanel extends JPanel {
 
         world.animals().forEach(animal -> {
 
-            g.setColor(animal.getColor());
-            g.fillRect(animal.getX() * cellSize + 10, animal.getY() * cellSize + 10, cellSize - 15, cellSize - 15);
+            Image animalImage = null;
+
+            if (animal instanceof Goat) {
+                animalImage = goatImage;
+            } else if (animal instanceof Lion) {
+                animalImage = lionImage;
+            }
+
+            if (animalImage != null) {
+                g.drawImage(animalImage, animal.getX() * cellSize, animal.getY() * cellSize, cellSize, cellSize, this);
+            }
 
             g.setColor(Color.BLACK);
 
@@ -51,6 +81,7 @@ public class WorldPanel extends JPanel {
             String idText = String.valueOf(animal.getId());
             char genderChar = animal.getGender() == Goat.Gender.MALE ? 'M' : 'F';
             idText += genderChar;
+
             int textWidth = g.getFontMetrics().stringWidth(idText);
             int textHeight = g.getFontMetrics().getHeight();
             int textX = animal.getX() * cellSize + (cellSize / 2) - (textWidth / 2);
