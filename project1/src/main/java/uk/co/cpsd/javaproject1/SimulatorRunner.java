@@ -8,7 +8,8 @@ public class SimulatorRunner {
             world.tick();
         }
 
-        world.writeToCSV(world.getGoatPopulationHistory(), world.getGrassPopulationHistory());
+        world.writeToCSV(world.getGoatPopulationHistory(), world.getGrassPopulationHistory(),
+                world.getLionPopulationHistory());
         GoatChart chart = new GoatChart(world.getGoatPopulationHistory(), world.getGrassPopulationHistory(),
                 world.getLionPopulationHistory());
         chart.setVisible(true);

@@ -28,7 +28,8 @@ public class SimulatorFrame extends JFrame {
             worldPanel.repaint(); // Show updates on the screen
 
             if (world.getTicksElapsed() >= tickLimitSimulation) {
-                world.writeToCSV(world.getGoatPopulationHistory(), world.getGrassPopulationHistory());
+                world.writeToCSV(world.getGoatPopulationHistory(), world.getGrassPopulationHistory(),
+                        world.getLionPopulationHistory());
                 timer.stop();
 
                 SwingUtilities.invokeLater(() -> {
