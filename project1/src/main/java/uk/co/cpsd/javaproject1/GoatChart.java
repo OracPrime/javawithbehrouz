@@ -4,7 +4,10 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import java.awt.Color;
 
 import javax.swing.*;
 
@@ -35,6 +38,13 @@ public class GoatChart extends JFrame {
                     "Count",
                     dataset);
 
+            // 🔽 Add this block to change series colors
+            CategoryPlot plot = chart.getCategoryPlot();
+            LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
+
+            renderer.setSeriesPaint(0, Color.BLUE);
+            renderer.setSeriesPaint(1, Color.GREEN.darker());
+            renderer.setSeriesPaint(2, Color.RED);
             ChartUtils.saveChartAsPNG(new File("chart.png"), chart, 600, 500);
             ChartPanel chartPanel = new ChartPanel(chart);
 
