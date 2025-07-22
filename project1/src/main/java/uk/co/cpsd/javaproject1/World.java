@@ -18,6 +18,8 @@ public class World {
     private List<Integer> goatPopulationHistory = new ArrayList<>();
     private List<Integer> grassPopulationHistory = new ArrayList<>();
     private List<Integer> lionPopulationHistory = new ArrayList<>();
+    public static int numOfDeadGoats = 0;
+    private int numOfAliveGoats = 0;
 
     public World(int numOfGoats, int numOfLions) {
         animals = new ArrayList<>();
@@ -96,14 +98,14 @@ public class World {
 
     // =============================
 
-    public void writeToCSV(List<Integer> goatHistory, List<Integer> grassHistory) {
+    public void writeToCSV(List<Integer> goatHistory, List<Integer> grassHistory, List<Integer> lionHistory) {
 
         try {
 
             FileWriter csvData = new FileWriter("data.csv");
-            csvData.write("Tick, NumOfGoat, NumOfGrass \n");
+            csvData.write("Tick, NumOfGoat, NumOfGrass, NumOfLion \n");
             for (int i = 0; i < goatHistory.size(); i++) {
-                csvData.write(i + ", " + goatHistory.get(i) + ", " + grassHistory.get(i));
+                csvData.write(i + ", " + goatHistory.get(i) + ", " + grassHistory.get(i) + ", " + lionHistory.get(i));
                 csvData.write("\n");
             }
             csvData.close();
@@ -117,7 +119,7 @@ public class World {
         List<Animal> babyAnimalHolder = new ArrayList<>();
         List<Animal> removedAnimalsHolder = new ArrayList<>();
         totalTicks++;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             growGrass();
         }
 
@@ -132,12 +134,20 @@ public class World {
             boolean isDead = animal.isEnergyZero(totalTicks);
             if (isDead || isTooOld) {
                 deadAnimals.add(animal);
+                numOfDeadGoats++;
+            }
+            if (animal instanceof Goat) {
+                numOfAliveGoats++;
             }
             animal.act(this, babyAnimalHolder, removedAnimalsHolder);
         }
+
         animals.addAll(babyAnimalHolder);
         animals.removeAll(deadAnimals);
         animals.removeAll(removedAnimalsHolder);
+        System.out.println(
+                "================== " + String.valueOf(numOfDeadGoats - Lion.numOfEatenGoats)
+                        + " ===========================");
     }
 
     public Map<Point, List<Object>> scanNeighbour(int x, int y) {
@@ -190,4 +200,7 @@ public class World {
         removedAnimalsHolder.add(animal);
     }
 
+    public int getNumOfAliveGoats() {
+        return numOfAliveGoats;
+    }
 }
