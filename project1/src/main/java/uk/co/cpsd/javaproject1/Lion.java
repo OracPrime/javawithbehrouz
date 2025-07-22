@@ -15,6 +15,8 @@ public class Lion extends Animal {
     public final int HUNGER_TRESHHOLDS = 50;
     private static final int Lion_MAX_AGE = 60;
 
+    public static int numOfEatenGoats = 0;
+
     public Lion(int x, int y) {
         super(x, y, 20);
     }
@@ -45,7 +47,7 @@ public class Lion extends Animal {
             }
         }
 
-        // 2. Priority: Reproduce (check nearby goats)
+        // 2. Priority: Reproduce (check nearby lions)
         for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByGoat.entrySet()) {
             for (Object obj : entry.getValue()) {
                 if (obj instanceof Lion otherLion && this.canReproduceWith(otherLion, world.getTotalTicks())) {
@@ -104,6 +106,7 @@ public class Lion extends Animal {
 
     public void eatGoat() {
         this.energyLevel += 20;
+        numOfEatenGoats++;
     }
 
     @Override
@@ -114,9 +117,16 @@ public class Lion extends Animal {
         switch (decisionInfo.getType()) {
             case EAT -> {
                 if (world.getAnimalAt(target.x, target.y) instanceof Goat) {
-                    eatGoat();
-                    world.removeAnimal(target.x, target.y, removedAnimalsHolder);
-                    setPosition(target, 5);
+                    if (attemptHunting(world.getNumOfAliveGoats())) {
+                        eatGoat();
+                        world.removeAnimal(target.x, target.y, removedAnimalsHolder);
+                        setPosition(target, 5);
+                    } else {
+                        Point samePosition = new Point(this.getX(), this.getY());
+                        setPosition(samePosition, 2);
+                        System.out.println("=============Hunting failed=============");
+                    }
+
                 }
             }
             case REPRODUCE -> {
@@ -137,7 +147,6 @@ public class Lion extends Animal {
                 Point randomMove = decisionInfo.getNextPos();
                 if (randomMove.x == getX() && randomMove.y == getY()) {
                     setPosition(randomMove, 0);
-                    System.out.println("Stay at same location===========================");
                 } else {
                     setPosition(randomMove, 1);
                 }
@@ -149,6 +158,23 @@ public class Lion extends Animal {
 
     public boolean isTooOld() {
         return this.getAge() > Lion_MAX_AGE;
+    }
+
+    public double getHuntingChance(int numOfAliveGoats) {
+        if (numOfAliveGoats <= 10)
+            return 0.0;
+        if (numOfAliveGoats <= 15)
+            return 0.3;
+        if (numOfAliveGoats <= 25)
+            return 0.6;
+        if (numOfAliveGoats <= 30)
+            return 0.8;
+        return 1.0;
+    }
+
+    public boolean attemptHunting(int numOfAliveGoats) {
+
+        return Math.random() < getHuntingChance(numOfAliveGoats);
     }
 
 }
