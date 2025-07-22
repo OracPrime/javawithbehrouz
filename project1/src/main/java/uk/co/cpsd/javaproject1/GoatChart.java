@@ -18,28 +18,27 @@ public class GoatChart extends JFrame {
 
         try {
             setTitle("Population Over Time");
-        setSize(700, 450);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setSize(700, 450);
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        for (int tick = 0; tick < goatCounts.size(); tick++) {
-            dataset.addValue(goatCounts.get(tick), "Goats", String.valueOf(tick));
-            dataset.addValue(grassCounts.get(tick), "Grass", String.valueOf(tick));
-        }
+            for (int tick = 0; tick < goatCounts.size(); tick++) {
+                dataset.addValue(goatCounts.get(tick), "Goats", String.valueOf(tick));
+                dataset.addValue(grassCounts.get(tick), "Grass", String.valueOf(tick));
+            }
 
-        JFreeChart chart = ChartFactory.createLineChart(
-                "Goat and Grass Population Over Time",
-                "Tick",
-                "Count",
-                dataset
-        );
+            JFreeChart chart = ChartFactory.createLineChart(
+                    "Goat and Grass Population Over Time",
+                    "Tick",
+                    "Count",
+                    dataset);
 
-        ChartUtils.saveChartAsPNG(new File("chart.png"), chart, 600, 500);
-        ChartPanel chartPanel = new ChartPanel(chart);
+            ChartUtils.saveChartAsPNG(new File("chart.png"), chart, 600, 500);
+            ChartPanel chartPanel = new ChartPanel(chart);
 
-        setContentPane(chartPanel);
+            setContentPane(chartPanel);
         } catch (IOException e) {
             System.out.println(e);
         }
