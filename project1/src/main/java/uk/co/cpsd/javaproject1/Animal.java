@@ -13,6 +13,7 @@ public abstract class Animal {
     protected int animalId;
     private static final AtomicInteger idCounter = new AtomicInteger(0);
     protected int lastEnergyDecreaseTick = 0;
+    protected int lastReproductionTick = -1;
 
     private Gender gender;
 
@@ -63,16 +64,63 @@ public abstract class Animal {
         return energyLevel;
     }
 
-    // public abstract Animal tryReproduceWith(Animal partner);
-
     public abstract boolean isHungry();
 
     public abstract DecisionInfo animalDecisionMaking(World world);
-
-    public abstract Animal reproduceWith(Animal partner, int currentTick);
 
     public void setPosition(Point point) {
         this.x = point.x;
         this.y = point.y;
     }
+
+    public Animal reproduceWithTwo(Animal partner, int currentTick) {
+        // both animals are of the same species
+        if (!this.getClass().equals(partner.getClass())) {
+            throw new IllegalArgumentException("Animals must be of the same species to reproduce.");
+        }
+
+        // Update reproduction tick
+        this.lastReproductionTick = currentTick;
+        partner.lastReproductionTick = currentTick;
+
+        // Subtract energy based on species and gender
+        this.energyLevel -= getEnergyCost(this.gender);
+        partner.energyLevel -= getEnergyCost(partner.gender);
+
+        // Create baby
+        Animal baby = createBaby(this.x, this.y);
+        baby.energyLevel = getInitialBabyEnergy();
+
+        return baby;
+    }
+
+    public int getLastReproductionTick() {
+        return lastReproductionTick;
+    }
+
+    public void setLastReproductionTick(int tick) {
+        this.lastReproductionTick = tick;
+    }
+
+    public boolean isFertile(Animal otherAnimal, int currentTick) {
+        if (otherAnimal == this)
+            return false;
+
+        boolean oppositeGender = this.getGender() != otherAnimal.getGender();
+        boolean pairsHaveEenergy = this.energyLevel >= getEnergyCost(this.gender)
+                && otherAnimal.energyLevel >= getEnergyCost(otherAnimal.gender);
+        boolean sinceLastReproduce = currentTick - this.lastReproductionTick >= getReproductionCooldown(this.gender)
+                && currentTick - otherAnimal.lastReproductionTick >= getReproductionCooldown(otherAnimal.gender);
+        boolean isFertile = oppositeGender && pairsHaveEenergy && sinceLastReproduce;
+        return isFertile;
+
+    }
+
+    protected abstract int getEnergyCost(Gender gender);
+
+    protected abstract int getInitialBabyEnergy();
+
+    protected abstract Animal createBaby(int x, int y);
+
+    protected abstract int getReproductionCooldown(Gender gender);
 }
