@@ -11,7 +11,6 @@ import uk.co.cpsd.javaproject1.DecisionInfo.DecisionType;
 
 public class Lion extends Animal {
 
-    private int lastReproductionTick = -8;
     public final int HUNGER_TRESHHOLDS = 50;
     private static final int Lion_MAX_AGE = 60;
 
@@ -50,7 +49,7 @@ public class Lion extends Animal {
         // 2. Priority: Reproduce (check nearby lions)
         for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByGoat.entrySet()) {
             for (Object obj : entry.getValue()) {
-                if (obj instanceof Lion otherLion && this.canReproduceWith(otherLion, world.getTotalTicks())) {
+                if (obj instanceof Lion otherLion && this.isFertile(otherLion, world.getTotalTicks())) {
                     return new DecisionInfo(DecisionType.REPRODUCE, entry.getKey());
                 }
             }
@@ -76,37 +75,11 @@ public class Lion extends Animal {
         return new Point(this.getX(), this.getY());
     }
 
-    public boolean canReproduceWith(Lion otherLion, int currentTick) {
-        if (otherLion == this)
-            return false;
-
-        boolean oppositeGender = this.getGender() != otherLion.getGender();
-        boolean pairsHaveEenergy = this.energyLevel >= 35 && otherLion.energyLevel >= 35;
-        boolean sinceLastReproduce = currentTick - this.lastReproductionTick >= 3
-                && currentTick - otherLion.lastReproductionTick >= 3;
-
-        boolean canReproduce = oppositeGender && pairsHaveEenergy && sinceLastReproduce;
-        return canReproduce;
-
-    }
-
-    @Override
-    public Animal reproduceWith(Animal partner, int currentTick) {
-        Lion LionPartner = (Lion) partner;
-        this.lastReproductionTick = currentTick;
-        LionPartner.lastReproductionTick = currentTick;
-        this.energyLevel = this.getGender() == Gender.FEMALE ? energyLevel - 10 : energyLevel - 8;
-        partner.energyLevel = partner.getGender() == Gender.FEMALE ? energyLevel - 10 : energyLevel - 8;
-
-        Lion babyLion = new Lion(getX(), getY());
-        babyLion.energyLevel = 15;
-
-        return babyLion;
-    }
-
     public void eatGoat() {
         this.energyLevel += 20;
         numOfEatenGoats++;
+        // RoarPlayer.playSound("/roar.wav");
+
     }
 
     @Override
@@ -117,13 +90,15 @@ public class Lion extends Animal {
         switch (decisionInfo.getType()) {
             case EAT -> {
                 if (world.getAnimalAt(target.x, target.y) instanceof Goat) {
-                    if (attemptHunting(world.getNumOfAliveGoats())) {
+                    int currentAliveGoats = world.getNumOfAliveGoats();
+                    boolean successfulHunt = attemptHunting(world.getNumOfAliveGoats()) && currentAliveGoats > 10;
+                    if (successfulHunt) {
                         eatGoat();
                         world.removeAnimal(target.x, target.y, removedAnimalsHolder);
                         setPosition(target, 5);
                     } else {
                         Point samePosition = new Point(this.getX(), this.getY());
-                        setPosition(samePosition, 2);
+                        setPosition(samePosition, 5);
                         System.out.println("=============Hunting failed=============");
                     }
 
@@ -134,8 +109,8 @@ public class Lion extends Animal {
                 Animal partnerLion = world
                         .getAnimalAt(partnerlocation.x, partnerlocation.y);
 
-                if (partnerLion instanceof Lion otherLion && this.canReproduceWith(otherLion, world.getTotalTicks())) {
-                    Animal babyLion = this.reproduceWith(otherLion, world.getTotalTicks());
+                if (partnerLion instanceof Lion otherLion && this.isFertile(otherLion, world.getTotalTicks())) {
+                    Animal babyLion = this.reproduceWithTwo(otherLion, world.getTotalTicks());
                     babyAnimalHolder.add(babyLion);
                 }
             }
@@ -176,5 +151,21 @@ public class Lion extends Animal {
 
         return Math.random() < getHuntingChance(numOfAliveGoats);
     }
+
+    public int getEnergyCost(Gender gender) {
+        return gender == Gender.FEMALE ? 15 : 10;
+    };
+
+    public Animal createBaby(int x, int y) {
+        return new Lion(x, y);
+    };
+
+    public int getInitialBabyEnergy() {
+        return 20;
+    };
+
+    public int getReproductionCooldown(Gender gender) {
+        return gender == Gender.FEMALE ? 10 : 5;
+    };
 
 }
