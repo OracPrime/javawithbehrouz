@@ -150,8 +150,4 @@ public class Goat extends Animal {
         return this.getAge() > GOAT_MAX_AGE;
     }
 
-    public boolean isTooOld() {
-        return this.getAge() > GOAT_MAX_AGE;
-    }
-
 }

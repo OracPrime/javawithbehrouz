@@ -133,9 +133,5 @@ public abstract class Animal {
         energyLevel = energyLevel - cost;
     };
 
-    public void setPositionCost(int cost) {
-        energyLevel = energyLevel - cost;
-    };
-
     public abstract boolean isTooOld();
 }
