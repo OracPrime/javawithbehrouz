@@ -15,11 +15,10 @@ public class Goat extends Animal {
 
     public final int ENERGY_DECREASE_INTERVAL = 5;
     public final int HUNGER_TRESHHOLDS = 50;
-    public final int MAX_GOAT_ENERGY_LEVEL = 130;
-    private int lastReproductionTick = -5;
 
     public Goat(int x, int y) {
         super(x, y, 10);
+        this.setLastReproductionTick(0);
     }
 
     public void eatGrass() {
@@ -49,9 +48,6 @@ public class Goat extends Animal {
             lastEnergyDecreaseTick = currentTick;
             return energyLevel <= 0;
         }
-
-        // System.out.println("Goat " + animalId + " energy decreased to " +
-        // energyLevel);
         return false;
     }
 
@@ -76,8 +72,8 @@ public class Goat extends Animal {
                 Point partnerlocation = decisionInfo.getNextPos();
                 Animal partnerGoat = world.getAnimalAt(partnerlocation.x, partnerlocation.y);
 
-                if (partnerGoat instanceof Goat otherGoat && this.canReproduceWith(otherGoat, world.getTotalTicks())) {
-                    Animal babyGoat = this.reproduceWith(otherGoat, world.getTotalTicks());
+                if (partnerGoat instanceof Goat otherGoat && this.isFertile(otherGoat, world.getTotalTicks())) {
+                    Animal babyGoat = this.reproduceWithTwo(otherGoat, world.getTotalTicks());
                     babyAnimalHolder.add(babyGoat);
                 }
                 break;
@@ -108,7 +104,7 @@ public class Goat extends Animal {
         // 2. Priority: Reproduce (check nearby goats)
         for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByGoat.entrySet()) {
             for (Object obj : entry.getValue()) {
-                if (obj instanceof Goat otherGoat && this.canReproduceWith(otherGoat, world.getTotalTicks())) {
+                if (obj instanceof Goat otherGoat && this.isFertile(otherGoat, world.getTotalTicks())) {
                     return new DecisionInfo(DecisionType.REPRODUCE, entry.getKey());
                 }
             }
@@ -148,31 +144,24 @@ public class Goat extends Animal {
         return new Point(this.getX(), this.getY());
     }
 
-    public boolean canReproduceWith(Goat otherGoat, int currentTick) {
-        if (otherGoat == this)
-            return false;
-
-        boolean oppositeGender = this.getGender() != otherGoat.getGender();
-        boolean pairsHaveEenergy = this.energyLevel >= 10 && otherGoat.energyLevel >= 10;
-        boolean sinceLastReproduce = currentTick - this.lastReproductionTick >= 5
-                && currentTick - otherGoat.lastReproductionTick >= 5;
-        boolean canReproduce = oppositeGender && pairsHaveEenergy && sinceLastReproduce;
-        return canReproduce;
+    @Override
+    public int getEnergyCost(Gender gender) {
+        return gender == Gender.FEMALE ? 7 : 5;
 
     }
 
     @Override
-    public Animal reproduceWith(Animal partner, int currentTick) {
-        Goat goatPartner = (Goat) partner;
-        this.lastReproductionTick = currentTick;
-        goatPartner.lastReproductionTick = currentTick;
-        this.energyLevel -= 10;
-        partner.energyLevel -= 10;
-
-        Goat babyGoat = new Goat(getX(), getY());
-        babyGoat.energyLevel = 5;
-
-        return babyGoat;
+    public int getInitialBabyEnergy() {
+        return 10;
     }
 
+    @Override
+    public Animal createBaby(int x, int y) {
+        return new Goat(x, y);
+    }
+
+    @Override
+    public int getReproductionCooldown(Gender gender) {
+        return gender == Gender.FEMALE ? 4 : 2;
+    }
 }
