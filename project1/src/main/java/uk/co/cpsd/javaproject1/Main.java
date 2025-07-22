@@ -16,6 +16,8 @@ public class Main {
                     "-->if you want to run just a simulation press 1 , \n-->if you want to run the app press 2.");
             int typeOfSimulation = userInput.nextInt();
 
+            boolean isGUIMode = (typeOfSimulation == 2);
+
             System.out.println("For how long do you want to run it? Enter the time in seconds.");
             int timeOfSimulation = userInput.nextInt();
 
@@ -28,11 +30,11 @@ public class Main {
             userInput.close();
 
             if (typeOfSimulation == 1) {
-                SimulatorRunner.noGUISimulation(timeOfSimulation, numOfGoats, numOfLions);
+                SimulatorRunner.noGUISimulation(timeOfSimulation, numOfGoats, numOfLions, isGUIMode);
             } else if (typeOfSimulation == 2) {
                 SwingUtilities.invokeLater(() -> {
                     @SuppressWarnings("unused")
-                    SimulatorFrame frame = new SimulatorFrame(timeOfSimulation, numOfGoats, numOfLions);
+                    SimulatorFrame frame = new SimulatorFrame(timeOfSimulation, numOfGoats, numOfLions, isGUIMode);
 
                 });
             }
