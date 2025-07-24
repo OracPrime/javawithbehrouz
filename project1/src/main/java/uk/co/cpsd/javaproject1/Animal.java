@@ -45,7 +45,7 @@ public abstract class Animal {
     }
 
     public boolean isEnergyZero(int currentTime) {
-        return energyLevel <= 0 ? true : false;
+        return energyLevel <= 0;
     }
 
     public abstract Color getColor();
