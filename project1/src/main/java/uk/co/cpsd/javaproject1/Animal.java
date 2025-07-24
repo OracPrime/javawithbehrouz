@@ -14,12 +14,22 @@ public abstract class Animal {
     private static final AtomicInteger idCounter = new AtomicInteger(0);
     protected int lastEnergyDecreaseTick = 0;
     protected int lastReproductionTick = -1;
+    private int age = 0;
 
     private Gender gender;
 
     public enum Gender {
         MALE,
         FEMALE
+    }
+
+    public void increaseAge() {
+        // System.out.println("animal by id" + this.animalId + " is age:" + getAge());
+        this.age++;
+    }
+
+    public int getAge() {
+        return age;
     }
 
     public Animal(int x, int y, int energyLevel) {
@@ -36,7 +46,7 @@ public abstract class Animal {
 
     public abstract void move(int worldSize);
 
-    public boolean decreaseEnergy(int currentTime) {
+    public boolean isEnergyZero(int currentTime) {
         return energyLevel <= 0 ? true : false;
     }
 
@@ -68,7 +78,8 @@ public abstract class Animal {
 
     public abstract DecisionInfo animalDecisionMaking(World world);
 
-    public void setPosition(Point point) {
+    public void setPosition(Point point, int cost) {
+        setPositionCost(cost);
         this.x = point.x;
         this.y = point.y;
     }
@@ -123,4 +134,8 @@ public abstract class Animal {
     protected abstract Animal createBaby(int x, int y);
 
     protected abstract int getReproductionCooldown(Gender gender);
+
+    public void setPositionCost(int cost) {
+        energyLevel = energyLevel - cost;
+    };
 }

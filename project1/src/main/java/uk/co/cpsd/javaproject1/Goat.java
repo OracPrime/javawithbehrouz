@@ -15,6 +15,7 @@ public class Goat extends Animal {
 
     public final int ENERGY_DECREASE_INTERVAL = 5;
     public final int HUNGER_TRESHHOLDS = 50;
+    public final int GOAT_MAX_AGE = 60;
 
     public Goat(int x, int y) {
         super(x, y, 10);
@@ -22,8 +23,8 @@ public class Goat extends Animal {
     }
 
     public void eatGrass() {
-        this.energyLevel += 5;
-        System.out.println("Goat " + animalId + " at (" + x + "," + y + ") ate grass. Energy: " + energyLevel);
+        this.energyLevel += 12;
+        System.out.println(energyLevel);
     }
 
     @Override
@@ -41,17 +42,6 @@ public class Goat extends Animal {
     }
 
     @Override
-    public boolean decreaseEnergy(int currentTick) {
-
-        if (currentTick - lastEnergyDecreaseTick >= ENERGY_DECREASE_INTERVAL) {
-            energyLevel -= 2;
-            lastEnergyDecreaseTick = currentTick;
-            return energyLevel <= 0;
-        }
-        return false;
-    }
-
-    @Override
     public boolean isHungry() {
         return this.energyLevel < HUNGER_TRESHHOLDS;
     }
@@ -65,7 +55,8 @@ public class Goat extends Animal {
                 if (world.hasGrass(decisionInfo.getNextPos().x, decisionInfo.getNextPos().y)) {
                     eatGrass();
                     world.removeGrass(decisionInfo.getNextPos().x, decisionInfo.getNextPos().y);
-                    setPosition(decisionInfo.getNextPos());
+                    setPosition(decisionInfo.getNextPos(), 1);
+                    ;
                 }
                 break;
             case REPRODUCE:
@@ -79,10 +70,10 @@ public class Goat extends Animal {
                 break;
             case FLEE:
                 Point safeRandomPoint = decisionInfo.getNextPos();
-                setPosition(safeRandomPoint);
+                setPosition(safeRandomPoint, 5);
             case WANDER:
                 Point randomMove = decisionInfo.getNextPos();
-                setPosition(randomMove);
+                setPosition(randomMove, 1);
 
         }
     }
@@ -164,4 +155,9 @@ public class Goat extends Animal {
     public int getReproductionCooldown(Gender gender) {
         return gender == Gender.FEMALE ? 4 : 2;
     }
+
+    public boolean isTooOld() {
+        return this.getAge() > GOAT_MAX_AGE;
+    }
+
 }

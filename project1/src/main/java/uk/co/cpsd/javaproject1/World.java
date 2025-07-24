@@ -103,22 +103,24 @@ public class World {
     public void tick() {
         List<Animal> babyAnimalHolder = new ArrayList<>();
         totalTicks++;
-        // growGrass();
         for (int i = 0; i < 10; i++) {
             growGrass();
         }
 
         goatPopulationHistory.add(findNumOfGoats());
         grassPopulationHistory.add(findNumOfGrass());
-        // handleReproduction();
         List<Animal> deadAnimals = new ArrayList<>();
         for (Animal animal : animals) {
-            boolean isDead = animal.decreaseEnergy(totalTicks);
-            // DecisionInfo animalDecision= animal.animalDecisionMaking(this);
-            animal.act(this, babyAnimalHolder);
+            animal.increaseAge();
+
+            if (animal instanceof Goat goat && goat.isTooOld()) {
+                deadAnimals.add(goat);
+            }
+            boolean isDead = animal.isEnergyZero(totalTicks);
             if (isDead) {
                 deadAnimals.add(animal);
             }
+            animal.act(this, babyAnimalHolder);
         }
         animals.addAll(babyAnimalHolder);
         animals.removeAll(deadAnimals);
