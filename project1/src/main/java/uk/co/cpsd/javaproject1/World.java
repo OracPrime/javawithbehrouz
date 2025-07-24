@@ -50,11 +50,11 @@ public class World {
         return grassDeathTime[x][y] > totalTicks;
     }
 
-    public int findNumOfGoats() {
+    public int goatCount() {
         return (int) animals.stream().filter(animal -> animal instanceof Goat).count();
     }
 
-    public int findNumOfLions() {
+    public int lionCount() {
         return (int) animals.stream().filter(animal -> animal instanceof Lion).count();
     }
 
@@ -62,7 +62,7 @@ public class World {
         return animals;
     }
 
-    public int findNumOfGrass() {
+    public int grassCount() {
         int numOfGrass = 0;
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
@@ -133,9 +133,9 @@ public class World {
             SoundPlayer.playSound("/goat.wav");
         }
 
-        goatPopulationHistory.add(findNumOfGoats());
-        grassPopulationHistory.add(findNumOfGrass());
-        lionPopulationHistory.add(findNumOfLions());
+        goatPopulationHistory.add(goatCount());
+        grassPopulationHistory.add(grassCount());
+        lionPopulationHistory.add(lionCount());
         List<Animal> deadAnimals = new ArrayList<>();
         for (Animal animal : animals) {
             animal.increaseAge();
