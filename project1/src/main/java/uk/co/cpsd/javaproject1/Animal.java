@@ -89,8 +89,8 @@ public abstract class Animal {
         partner.lastReproductionTick = currentTick;
 
         // Subtract energy based on species and gender
-        this.energyLevel -= getEnergyCost(this.gender);
-        partner.energyLevel -= getEnergyCost(partner.gender);
+        this.energyLevel -= getReproductionEnergyCost(this.gender);
+        partner.energyLevel -= getReproductionEnergyCost(partner.gender);
 
         // Create baby
         Animal baby = createBaby(this.x, this.y);
@@ -112,8 +112,8 @@ public abstract class Animal {
             return false;
 
         boolean oppositeGender = this.getGender() != otherAnimal.getGender();
-        boolean pairsHaveEenergy = this.energyLevel >= getEnergyCost(this.gender)
-                && otherAnimal.energyLevel >= getEnergyCost(otherAnimal.gender);
+        boolean pairsHaveEenergy = this.energyLevel >= getReproductionEnergyCost(this.gender)
+                && otherAnimal.energyLevel >= getReproductionEnergyCost(otherAnimal.gender);
         boolean sinceLastReproduce = currentTick - this.lastReproductionTick >= getReproductionCooldown(this.gender)
                 && currentTick - otherAnimal.lastReproductionTick >= getReproductionCooldown(otherAnimal.gender);
         boolean isFertile = oppositeGender && pairsHaveEenergy && sinceLastReproduce;
@@ -121,7 +121,7 @@ public abstract class Animal {
 
     }
 
-    protected abstract int getEnergyCost(Gender gender);
+    protected abstract int getReproductionEnergyCost(Gender gender);
 
     protected abstract int getInitialBabyEnergy();
 

@@ -126,7 +126,7 @@ public class Goat extends Animal {
     }
 
     @Override
-    public int getEnergyCost(Gender gender) {
+    public int getReproductionEnergyCost(Gender gender) {
         return gender == Gender.FEMALE ? 7 : 5;
 
     }

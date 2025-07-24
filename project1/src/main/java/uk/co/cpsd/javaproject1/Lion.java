@@ -152,7 +152,7 @@ public class Lion extends Animal {
         return Math.random() < getHuntingChance(numOfAliveGoats);
     }
 
-    public int getEnergyCost(Gender gender) {
+    public int getReproductionEnergyCost(Gender gender) {
         return gender == Gender.FEMALE ? 15 : 10;
     };
 
