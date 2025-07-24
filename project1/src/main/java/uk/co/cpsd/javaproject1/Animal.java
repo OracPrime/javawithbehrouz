@@ -44,14 +44,8 @@ public abstract class Animal {
         return gender;
     }
 
-    public abstract void move(int worldSize);
-
     public boolean isEnergyZero(int currentTime) {
         return energyLevel <= 0 ? true : false;
-    }
-
-    public void decreaseEnergyBy(int amount) {
-        this.energyLevel -= amount;
     }
 
     public abstract Color getColor();
@@ -68,7 +62,7 @@ public abstract class Animal {
         return animalId;
     }
 
-    public abstract void act(World world, List<Animal> babyAnimalHolder);
+    public abstract void act(World world, List<Animal> babyAnimalHolder, List<Animal> removedAnimalsHolder);
 
     public int getEnergy() {
         return energyLevel;
@@ -138,4 +132,6 @@ public abstract class Animal {
     public void setPositionCost(int cost) {
         energyLevel = energyLevel - cost;
     };
+
+    public abstract boolean isTooOld();
 }

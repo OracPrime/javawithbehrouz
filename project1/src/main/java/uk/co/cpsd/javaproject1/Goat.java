@@ -13,7 +13,6 @@ import java.awt.Point;
 
 public class Goat extends Animal {
 
-    public final int ENERGY_DECREASE_INTERVAL = 5;
     public final int HUNGER_TRESHHOLDS = 50;
     public final int GOAT_MAX_AGE = 60;
 
@@ -28,15 +27,6 @@ public class Goat extends Animal {
     }
 
     @Override
-    public void move(int worldSize) {
-        int dx = (int) (Math.random() * 3) - 1;
-        int dy = (int) (Math.random() * 3) - 1;
-
-        x = Math.max(0, Math.min(worldSize - 1, x + dx));
-        y = Math.max(0, Math.min(worldSize - 1, y + dy));
-    }
-
-    @Override
     public Color getColor() {
         return Color.RED;
     }
@@ -47,7 +37,7 @@ public class Goat extends Animal {
     }
 
     @Override
-    public void act(World world, List<Animal> babyAnimalHolder) {
+    public void act(World world, List<Animal> babyAnimalHolder, List<Animal> removedAnimalsHolder) {
         DecisionInfo decisionInfo = animalDecisionMaking(world);
 
         switch (decisionInfo.getType()) {

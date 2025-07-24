@@ -11,8 +11,8 @@ public class SimulatorFrame extends JFrame {
     private WorldPanel worldPanel;
     private Timer timer;
 
-    public SimulatorFrame(int tickLimitSimulation, int numOfGoats) {
-        world = new World(numOfGoats);
+    public SimulatorFrame(int tickLimitSimulation, int numOfGoats, int numOfLions, boolean isGUIMode) {
+        world = new World(numOfGoats, numOfLions, isGUIMode);
 
         worldPanel = new WorldPanel(world);
         add(worldPanel);
@@ -28,12 +28,13 @@ public class SimulatorFrame extends JFrame {
             worldPanel.repaint(); // Show updates on the screen
 
             if (world.getTicksElapsed() >= tickLimitSimulation) {
-                world.writeToCSV(world.getGoatPopulationHistory(), world.getGrassPopulationHistory());
+                world.writeToCSV(world.getGoatPopulationHistory(), world.getGrassPopulationHistory(),
+                        world.getLionPopulationHistory());
                 timer.stop();
 
                 SwingUtilities.invokeLater(() -> {
                     GoatChart chart = new GoatChart(world.getGoatPopulationHistory(),
-                            world.getGrassPopulationHistory());
+                            world.getGrassPopulationHistory(), world.getLionPopulationHistory());
                     chart.setVisible(true);
                 });
             }

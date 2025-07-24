@@ -17,16 +17,29 @@ public class World {
     private int[][] grassDeathTime = new int[size][size];
     private List<Integer> goatPopulationHistory = new ArrayList<>();
     private List<Integer> grassPopulationHistory = new ArrayList<>();
+    private List<Integer> lionPopulationHistory = new ArrayList<>();
+    public static int numOfDeadGoats = 0;
+    private int numOfAliveGoats = 0;
+    private boolean isGUIMode;
 
-    public World(int numOfGoats) {
+    public World(int numOfGoats, int numOfLions, boolean isGUIMode) {
         animals = new ArrayList<>();
         for (int i = 0; i < numOfGoats; i++) {
             animals.add(new Goat((int) (Math.random() * size), (int) (Math.random() * size)));
         }
+
+        for (int j = 0; j < numOfLions; j++) {
+            animals.add(new Lion((int) Math.random() * size, (int) Math.random() * size));
+        }
+        this.isGUIMode = isGUIMode;
     }
 
     public List<Integer> getGoatPopulationHistory() {
         return goatPopulationHistory;
+    }
+
+    public List<Integer> getLionPopulationHistory() {
+        return lionPopulationHistory;
     }
 
     public List<Integer> getGrassPopulationHistory() {
@@ -39,6 +52,10 @@ public class World {
 
     public int findNumOfGoats() {
         return (int) animals.stream().filter(animal -> animal instanceof Goat).count();
+    }
+
+    public int findNumOfLions() {
+        return (int) animals.stream().filter(animal -> animal instanceof Lion).count();
     }
 
     public List<Animal> getAnimals() {
@@ -83,14 +100,14 @@ public class World {
 
     // =============================
 
-    public void writeToCSV(List<Integer> goatHistory, List<Integer> grassHistory) {
+    public void writeToCSV(List<Integer> goatHistory, List<Integer> grassHistory, List<Integer> lionHistory) {
 
         try {
 
             FileWriter csvData = new FileWriter("data.csv");
-            csvData.write("Tick, NumOfGoat, NumOfGrass \n");
+            csvData.write("Tick, NumOfGoat, NumOfGrass, NumOfLion \n");
             for (int i = 0; i < goatHistory.size(); i++) {
-                csvData.write(i + ", " + goatHistory.get(i) + ", " + grassHistory.get(i));
+                csvData.write(i + ", " + goatHistory.get(i) + ", " + grassHistory.get(i) + ", " + lionHistory.get(i));
                 csvData.write("\n");
             }
             csvData.close();
@@ -102,28 +119,45 @@ public class World {
 
     public void tick() {
         List<Animal> babyAnimalHolder = new ArrayList<>();
+        List<Animal> removedAnimalsHolder = new ArrayList<>();
         totalTicks++;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             growGrass();
+        }
+
+        if (isGUIMode && totalTicks % 7 == 0) {
+            SoundPlayer.playSound("/roar.wav");
+        }
+
+        if (isGUIMode && totalTicks % 4 == 0) {
+            SoundPlayer.playSound("/goat.wav");
         }
 
         goatPopulationHistory.add(findNumOfGoats());
         grassPopulationHistory.add(findNumOfGrass());
+        lionPopulationHistory.add(findNumOfLions());
         List<Animal> deadAnimals = new ArrayList<>();
         for (Animal animal : animals) {
             animal.increaseAge();
 
-            if (animal instanceof Goat goat && goat.isTooOld()) {
-                deadAnimals.add(goat);
-            }
+            boolean isTooOld = animal.isTooOld();
             boolean isDead = animal.isEnergyZero(totalTicks);
-            if (isDead) {
+            if (isDead || isTooOld) {
                 deadAnimals.add(animal);
+                numOfDeadGoats++;
             }
-            animal.act(this, babyAnimalHolder);
+            if (animal instanceof Goat) {
+                numOfAliveGoats++;
+            }
+            animal.act(this, babyAnimalHolder, removedAnimalsHolder);
         }
+
         animals.addAll(babyAnimalHolder);
         animals.removeAll(deadAnimals);
+        animals.removeAll(removedAnimalsHolder);
+        System.out.println(
+                "================== " + String.valueOf(numOfDeadGoats - Lion.numOfEatenGoats)
+                        + " ===========================");
     }
 
     public Map<Point, List<Object>> scanNeighbour(int x, int y) {
@@ -146,7 +180,7 @@ public class World {
                 }
 
                 Animal animalAtPos = getAnimalAt(nx, ny);
-                if (animalAtPos != null && animalAtPos instanceof Goat) {
+                if (animalAtPos != null) {
                     infoOfPosition.add(animalAtPos);
 
                 }
@@ -171,4 +205,12 @@ public class World {
         return null;
     }
 
+    public void removeAnimal(int x, int y, List<Animal> removedAnimalsHolder) {
+        Animal animal = getAnimalAt(x, y);
+        removedAnimalsHolder.add(animal);
+    }
+
+    public int getNumOfAliveGoats() {
+        return numOfAliveGoats;
+    }
 }
