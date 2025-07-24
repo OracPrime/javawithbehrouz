@@ -140,7 +140,7 @@ public class World {
         for (Animal animal : animals) {
             animal.increaseAge();
 
-            boolean isTooOld = animal.isTooOld();
+            boolean isTooOld = animal.hasReachedEndOfLife();
             boolean isDead = animal.isEnergyZero(totalTicks);
             if (isDead || isTooOld) {
                 deadAnimals.add(animal);

@@ -133,5 +133,9 @@ public abstract class Animal {
         energyLevel = energyLevel - cost;
     };
 
-    public abstract boolean isTooOld();
+    /**
+     * Determines if the animal has reached the age at which it should be considered
+     * deceased or removed from the simulation.
+     */
+    public abstract boolean hasReachedEndOfLife();
 }

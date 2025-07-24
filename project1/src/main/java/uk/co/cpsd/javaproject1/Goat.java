@@ -146,7 +146,7 @@ public class Goat extends Animal {
         return gender == Gender.FEMALE ? 4 : 2;
     }
 
-    public boolean isTooOld() {
+    public boolean hasReachedEndOfLife() {
         return this.getAge() > GOAT_MAX_AGE;
     }
 

@@ -131,7 +131,7 @@ public class Lion extends Animal {
         }
     }
 
-    public boolean isTooOld() {
+    public boolean hasReachedEndOfLife() {
         return this.getAge() > Lion_MAX_AGE;
     }
 
