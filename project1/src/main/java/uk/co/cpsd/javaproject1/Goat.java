@@ -41,17 +41,6 @@ public class Goat extends Animal {
         return Color.RED;
     }
 
-    // @Override
-    // public boolean isEnergyZero(int currentTick) {
-
-    // if (currentTick - lastEnergyDecreaseTick >= ENERGY_DECREASE_INTERVAL) {
-    // energyLevel -= 2;
-    // lastEnergyDecreaseTick = currentTick;
-    // return energyLevel <= 0;
-    // }
-    // return false;
-    // }
-
     @Override
     public boolean isHungry() {
         return this.energyLevel < HUNGER_TRESHHOLDS;
