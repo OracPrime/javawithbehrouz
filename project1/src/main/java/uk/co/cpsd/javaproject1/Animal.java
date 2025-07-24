@@ -73,7 +73,7 @@ public abstract class Animal {
     public abstract DecisionInfo animalDecisionMaking(World world);
 
     public void setPosition(Point point, int cost) {
-        setPositionCost(cost);
+        applyMovementCost(cost);
         this.x = point.x;
         this.y = point.y;
     }
@@ -129,7 +129,7 @@ public abstract class Animal {
 
     protected abstract int getReproductionCooldown(Gender gender);
 
-    public void setPositionCost(int cost) {
+    public void applyMovementCost(int cost) {
         energyLevel = energyLevel - cost;
     };
 
