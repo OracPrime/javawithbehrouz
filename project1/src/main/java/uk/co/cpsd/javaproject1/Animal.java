@@ -112,11 +112,11 @@ public abstract class Animal {
             return false;
 
         boolean oppositeGender = this.getGender() != otherAnimal.getGender();
-        boolean pairsHaveEenergy = this.energyLevel >= getReproductionEnergyCost(this.gender)
+        boolean pairsHaveEnergy = this.energyLevel >= getReproductionEnergyCost(this.gender)
                 && otherAnimal.energyLevel >= getReproductionEnergyCost(otherAnimal.gender);
         boolean sinceLastReproduce = currentTick - this.lastReproductionTick >= getReproductionCooldown(this.gender)
                 && currentTick - otherAnimal.lastReproductionTick >= getReproductionCooldown(otherAnimal.gender);
-        boolean isFertile = oppositeGender && pairsHaveEenergy && sinceLastReproduce;
+        boolean isFertile = oppositeGender && pairsHaveEnergy && sinceLastReproduce;
         return isFertile;
 
     }
