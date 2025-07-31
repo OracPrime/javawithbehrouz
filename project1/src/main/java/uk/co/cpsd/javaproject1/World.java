@@ -166,8 +166,6 @@ public class World {
 
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
-                if (dx == 0 && dy == 0)
-                    continue;
 
                 int nx = x + dx;
                 int ny = y + dy;
