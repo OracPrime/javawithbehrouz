@@ -7,14 +7,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Animal {
 
-    protected int x;
-    protected int y;
     protected int energyLevel;
     protected int animalId;
     private static final AtomicInteger idCounter = new AtomicInteger(0);
     protected int lastEnergyDecreaseTick = 0;
     protected int lastReproductionTick = -1;
     private int age = 0;
+    protected Point position;
 
     private final Gender gender;
 
@@ -33,8 +32,7 @@ public abstract class Animal {
     }
 
     public Animal(int x, int y, int energyLevel) {
-        this.x = x;
-        this.y = y;
+        this.position = new Point(x, y);
         this.energyLevel = energyLevel;
         this.gender = Math.random() < .5 ? Gender.MALE : Gender.FEMALE;
         this.animalId = idCounter.getAndIncrement();
@@ -51,11 +49,11 @@ public abstract class Animal {
     public abstract Color getColor();
 
     public int getX() {
-        return x;
+        return position.x;
     }
 
     public int getY() {
-        return y;
+        return position.y;
     }
 
     public int getId() {
@@ -74,8 +72,7 @@ public abstract class Animal {
 
     public void setPosition(Point point, int cost) {
         applyMovementCost(cost);
-        this.x = point.x;
-        this.y = point.y;
+        this.position = new Point(point); // returns a copy
     }
 
     public Animal reproduceWithTwo(Animal partner, int currentTick) {
@@ -93,7 +90,7 @@ public abstract class Animal {
         partner.energyLevel -= getReproductionEnergyCost(partner.gender);
 
         // Create baby
-        Animal baby = createBaby(this.x, this.y);
+        Animal baby = createBaby(this.position.x, this.position.y);
         baby.energyLevel = getInitialBabyEnergy();
 
         return baby;
@@ -138,4 +135,8 @@ public abstract class Animal {
      * deceased or removed from the simulation.
      */
     public abstract boolean hasReachedEndOfLife();
+
+    public Point getAnimalCoordinates() {
+        return new Point(position);
+    }
 }
