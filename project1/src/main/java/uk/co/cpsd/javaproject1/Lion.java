@@ -33,11 +33,11 @@ public class Lion extends Animal {
     @Override
     public DecisionInfo animalDecisionMaking(World world) {
 
-        Map<Point, List<Object>> scanedNeighbourHoodByGoat = world.scanNeighbour(getX(), getY());
+        Map<Point, List<Object>> scanedNeighbourHoodByLion = world.scanNeighbour(getX(), getY());
 
         // 1. Priority: Eat if hungry
         if (isHungry()) {
-            for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByGoat.entrySet()) {
+            for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByLion.entrySet()) {
                 for (Object obj : entry.getValue()) {
                     if (obj instanceof Goat) {
                         return new DecisionInfo(DecisionType.EAT, entry.getKey());
@@ -47,7 +47,7 @@ public class Lion extends Animal {
         }
 
         // 2. Priority: Reproduce (check nearby lions)
-        for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByGoat.entrySet()) {
+        for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByLion.entrySet()) {
             for (Object obj : entry.getValue()) {
                 if (obj instanceof Lion otherLion && this.isFertile(otherLion, world.getTotalTicks())) {
                     return new DecisionInfo(DecisionType.REPRODUCE, entry.getKey());
@@ -58,7 +58,7 @@ public class Lion extends Animal {
         // 3. Default: Stay in place or Random move
         boolean moveChance = Math.random() < 0.25;
         if (moveChance) {
-            Point randomMove = findRandomPos(scanedNeighbourHoodByGoat);
+            Point randomMove = findRandomPos(scanedNeighbourHoodByLion);
             return new DecisionInfo(DecisionType.WANDER, randomMove);
         } else {
             Point sameLocation = new Point(getX(), getY());
