@@ -16,7 +16,7 @@ public abstract class Animal {
     protected int lastReproductionTick = -1;
     private int age = 0;
 
-    private Gender gender;
+    private final Gender gender;
 
     public enum Gender {
         MALE,
