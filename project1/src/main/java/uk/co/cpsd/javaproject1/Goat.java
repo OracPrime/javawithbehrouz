@@ -73,7 +73,13 @@ public class Goat extends Animal {
 
         Map<Point, List<Object>> scanedNeighbourHoodByGoat = world.scanNeighbour(getX(), getY());
 
-        // 1. Priority: Eat if hungry
+        // 1. Priority: Flee from danger
+        Point safe = findRandomSafePos(scanedNeighbourHoodByGoat);
+        if (!safe.equals(new Point(getX(), getY()))) {
+            return new DecisionInfo(DecisionType.FLEE, safe);
+        }
+
+        // 2. Priority: Eat if hungry
         if (isHungry()) {
             for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByGoat.entrySet()) {
                 if (entry.getValue().contains("grass")) {
@@ -82,19 +88,13 @@ public class Goat extends Animal {
             }
         }
 
-        // 2. Priority: Reproduce (check nearby goats)
+        // 3. Priority: Reproduce (check nearby goats)
         for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByGoat.entrySet()) {
             for (Object obj : entry.getValue()) {
                 if (obj instanceof Goat otherGoat && this.isFertile(otherGoat, world.getTotalTicks())) {
                     return new DecisionInfo(DecisionType.REPRODUCE, entry.getKey());
                 }
             }
-        }
-
-        // 3. Priority: Flee from danger
-        Point safe = findRandomSafePos(scanedNeighbourHoodByGoat);
-        if (!safe.equals(new Point(getX(), getY()))) {
-            return new DecisionInfo(DecisionType.FLEE, safe);
         }
 
         // 4. Default: Random move
