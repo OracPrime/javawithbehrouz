@@ -21,8 +21,9 @@ public class World {
     public static int numOfDeadGoats = 0;
     private int numOfAliveGoats = 0;
     private boolean isGUIMode;
+    private final AudioPlayer player;
 
-    public World(int numOfGoats, int numOfLions, boolean isGUIMode) {
+    public World(int numOfGoats, int numOfLions, boolean isGUIMode, AudioPlayer player) {
         animals = new ArrayList<>();
         for (int i = 0; i < numOfGoats; i++) {
             animals.add(new Goat((int) (Math.random() * size), (int) (Math.random() * size)));
@@ -32,6 +33,7 @@ public class World {
             animals.add(new Lion((int) Math.random() * size, (int) Math.random() * size));
         }
         this.isGUIMode = isGUIMode;
+        this.player = player;
     }
 
     public List<Integer> getGoatPopulationHistory() {
@@ -125,12 +127,12 @@ public class World {
             growGrass();
         }
 
-        if (isGUIMode && totalTicks % 7 == 0) {
-            SoundPlayer.playSound("/roar.wav");
+        if (isGUIMode && totalTicks % 12 == 0) {
+            player.playSound("/roar.wav");
         }
 
-        if (isGUIMode && totalTicks % 4 == 0) {
-            SoundPlayer.playSound("/goat.wav");
+        if (isGUIMode && totalTicks % 8 == 0) {
+            player.playSound("/goat.wav");
         }
 
         goatPopulationHistory.add(goatCount());
