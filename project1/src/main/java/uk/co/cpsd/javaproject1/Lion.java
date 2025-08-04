@@ -85,17 +85,17 @@ public class Lion extends Animal {
     @Override
     public void act(World world, List<Animal> babyAnimalHolder, List<Animal> removedAnimalsHolder) {
         DecisionInfo decisionInfo = animalDecisionMaking(world);
-        Point target = decisionInfo.nextPos();
+        Point nextPos = decisionInfo.nextPos();
 
         switch (decisionInfo.type()) {
             case EAT -> {
-                if (world.getAnimalAt(target.x, target.y) instanceof Goat) {
+                if (world.getAnimalAt(nextPos.x, nextPos.y) instanceof Goat) {
                     int currentAliveGoats = world.getNumOfAliveGoats();
                     boolean successfulHunt = attemptHunting(world.getNumOfAliveGoats()) && currentAliveGoats > 10;
                     if (successfulHunt) {
                         eatGoat();
-                        world.removeAnimal(target.x, target.y, removedAnimalsHolder);
-                        setPosition(target, 5);
+                        world.removeAnimal(nextPos.x, nextPos.y, removedAnimalsHolder);
+                        setPosition(nextPos, 5);
                     } else {
                         Point samePosition = new Point(this.getX(), this.getY());
                         setPosition(samePosition, 5);
