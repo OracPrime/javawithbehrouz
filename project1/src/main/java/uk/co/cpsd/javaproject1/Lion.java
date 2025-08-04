@@ -49,7 +49,7 @@ public class Lion extends Animal {
         // 2. Priority: Reproduce (check nearby lions)
         for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByLion.entrySet()) {
             for (Object obj : entry.getValue()) {
-                if (obj instanceof Lion otherLion && this.isFertile(otherLion, world.getTotalTicks())) {
+                if (obj instanceof Lion otherLion && this.willMate(otherLion, world.getTotalTicks())) {
                     return new DecisionInfo(DecisionType.REPRODUCE, entry.getKey());
                 }
             }
@@ -109,7 +109,7 @@ public class Lion extends Animal {
                 Animal partnerLion = world
                         .getAnimalAt(partnerlocation.x, partnerlocation.y);
 
-                if (partnerLion instanceof Lion otherLion && this.isFertile(otherLion, world.getTotalTicks())) {
+                if (partnerLion instanceof Lion otherLion && this.willMate(otherLion, world.getTotalTicks())) {
                     Animal babyLion = this.reproduceWithTwo(otherLion, world.getTotalTicks());
                     babyAnimalHolder.add(babyLion);
                 }
@@ -167,5 +167,13 @@ public class Lion extends Animal {
     public int getReproductionCooldown(Gender gender) {
         return gender == Gender.FEMALE ? 10 : 5;
     };
+
+    @Override
+    public boolean isFertile(int currentTick) {
+        boolean sinceLastReproduce = currentTick
+                - this.lastReproductionTick >= getReproductionCooldown(this.getGender());
+        boolean hasEnergy = this.energyLevel >= getReproductionEnergyCost(this.getGender());
+        return sinceLastReproduce && hasEnergy;
+    }
 
 }

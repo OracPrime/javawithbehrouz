@@ -53,7 +53,7 @@ public class Goat extends Animal {
                 Point partnerlocation = decisionInfo.nextPos();
                 Animal partnerGoat = world.getAnimalAt(partnerlocation.x, partnerlocation.y);
 
-                if (partnerGoat instanceof Goat otherGoat && this.isFertile(otherGoat, world.getTotalTicks())) {
+                if (partnerGoat instanceof Goat otherGoat && this.willMate(otherGoat, world.getTotalTicks())) {
                     Animal babyGoat = this.reproduceWithTwo(otherGoat, world.getTotalTicks());
                     babyAnimalHolder.add(babyGoat);
                 }
@@ -91,7 +91,7 @@ public class Goat extends Animal {
         // 3. Priority: Reproduce (check nearby goats)
         for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByGoat.entrySet()) {
             for (Object obj : entry.getValue()) {
-                if (obj instanceof Goat otherGoat && this.isFertile(otherGoat, world.getTotalTicks())) {
+                if (obj instanceof Goat otherGoat && this.willMate(otherGoat, world.getTotalTicks())) {
                     return new DecisionInfo(DecisionType.REPRODUCE, entry.getKey());
                 }
             }
@@ -148,6 +148,15 @@ public class Goat extends Animal {
 
     public boolean hasReachedEndOfLife() {
         return this.getAge() > GOAT_MAX_AGE;
+    }
+
+    @Override
+    public boolean isFertile(int currentTick) {
+
+        boolean sinceLastReproduce = currentTick
+                - this.lastReproductionTick >= getReproductionCooldown(this.getGender());
+        boolean hasEnergy = this.energyLevel >= getReproductionEnergyCost(this.getGender());
+        return sinceLastReproduce && hasEnergy;
     }
 
 }
