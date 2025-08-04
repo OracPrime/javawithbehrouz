@@ -40,17 +40,17 @@ public class Goat extends Animal {
     public void act(World world, List<Animal> babyAnimalHolder, List<Animal> removedAnimalsHolder) {
         DecisionInfo decisionInfo = animalDecisionMaking(world);
 
-        switch (decisionInfo.getType()) {
+        switch (decisionInfo.type()) {
             case EAT:
-                if (world.hasGrass(decisionInfo.getNextPos().x, decisionInfo.getNextPos().y)) {
+                if (world.hasGrass(decisionInfo.nextPos().x, decisionInfo.nextPos().y)) {
                     eatGrass();
-                    world.removeGrass(decisionInfo.getNextPos().x, decisionInfo.getNextPos().y);
-                    setPosition(decisionInfo.getNextPos(), 1);
+                    world.removeGrass(decisionInfo.nextPos().x, decisionInfo.nextPos().y);
+                    setPosition(decisionInfo.nextPos(), 1);
                     ;
                 }
                 break;
             case REPRODUCE:
-                Point partnerlocation = decisionInfo.getNextPos();
+                Point partnerlocation = decisionInfo.nextPos();
                 Animal partnerGoat = world.getAnimalAt(partnerlocation.x, partnerlocation.y);
 
                 if (partnerGoat instanceof Goat otherGoat && this.isFertile(otherGoat, world.getTotalTicks())) {
@@ -59,10 +59,10 @@ public class Goat extends Animal {
                 }
                 break;
             case FLEE:
-                Point safeRandomPoint = decisionInfo.getNextPos();
+                Point safeRandomPoint = decisionInfo.nextPos();
                 setPosition(safeRandomPoint, 5);
             case WANDER:
-                Point randomMove = decisionInfo.getNextPos();
+                Point randomMove = decisionInfo.nextPos();
                 setPosition(randomMove, 1);
 
         }
