@@ -163,7 +163,6 @@ public class World {
         animals.removeAll(removedAnimalsHolder);
     }
 
-    // cpmment to test ssh setup
     public Map<Point, List<Object>> scanNeighbour(int x, int y) {
 
         Map<Point, List<Object>> resultOfScan = new HashMap<>();
