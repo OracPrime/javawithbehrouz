@@ -146,7 +146,11 @@ public class World {
             boolean isDead = animal.isEnergyZero(totalTicks);
             if (isDead || isTooOld) {
                 deadAnimals.add(animal);
-                numOfDeadGoats++;
+                if(animal instanceof Goat){
+                    numOfDeadGoats++;
+                    System.out.println("--------->Goat died: "+ animal.animalId);
+                }
+
             }
             if (animal instanceof Goat) {
                 numOfAliveGoats++;
@@ -157,9 +161,6 @@ public class World {
         animals.addAll(babyAnimalHolder);
         animals.removeAll(deadAnimals);
         animals.removeAll(removedAnimalsHolder);
-        System.out.println(
-                "================== " + String.valueOf(numOfDeadGoats - Lion.numOfEatenGoats)
-                        + " ===========================");
     }
 
     public Map<Point, List<Object>> scanNeighbour(int x, int y) {
