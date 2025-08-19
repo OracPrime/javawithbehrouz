@@ -105,18 +105,50 @@ public class Goat extends Animal {
     }
 
     public Point findRandomSafePos(Map<Point, List<Object>> neighbourHoodPos) {
-        List<Point> safeTiles = neighbourHoodPos.entrySet()
-                .stream()
-                .filter(e -> !e.getValue().contains("lion"))
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-
-        if (!safeTiles.isEmpty()) {
-            return safeTiles.get(new Random().nextInt(safeTiles.size()));
+        Point lionPos = null;
+        // find the position of the lion
+        for (Map.Entry<Point, List<Object>> entry : neighbourHoodPos.entrySet()) {
+            for (Object obj : entry.getValue()) {
+                if (obj instanceof Lion) {
+                    lionPos = entry.getKey();
+                    break;
+                }
+            }
+            if (lionPos != null) {
+                break;
+            }
         }
 
-        // All tiles are dangerous stay in its place
-        return new Point(this.getX(), this.getY());
+        if (lionPos == null) {
+            return new Point(this.getX(), this.getY());
+        }
+
+        // find the safest tile
+        Point safestTile = null;
+        double maxDistance = -1;
+
+        for (Point potentialTile : neighbourHoodPos.keySet()) {
+            boolean hasLion = false;
+            List<Object> objectsAtTile = neighbourHoodPos.get(potentialTile);
+            if (objectsAtTile != null) {
+                for (Object obj : objectsAtTile) {
+                    if (obj instanceof Lion) {
+                        hasLion = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!hasLion) {
+                double distance = potentialTile.distanceSq(lionPos); // distanceSq is faster than distance
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                    safestTile = potentialTile;
+                }
+            }
+        }
+
+        return safestTile != null ? safestTile : new Point(this.getX(), this.getY());
     }
 
     public Point findRandomPos(Map<Point, List<Object>> neighbourHoodPos) {
