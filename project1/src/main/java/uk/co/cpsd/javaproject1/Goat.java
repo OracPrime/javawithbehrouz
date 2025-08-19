@@ -13,17 +13,17 @@ import java.awt.Point;
 
 public class Goat extends Animal {
 
-    public final int HUNGER_TRESHHOLDS = 50;
+    public final int HUNGER_THRESHOLDS = 30;
     public final int GOAT_MAX_AGE = 60;
 
     public Goat(int x, int y) {
-        super(x, y, 10);
+        super(x, y, 40);
         this.setLastReproductionTick(0);
     }
 
     public void eatGrass() {
-        this.energyLevel += 12;
-        System.out.println(energyLevel);
+        this.energyLevel += 20;
+        System.out.println(energyLevel+"<=====Energy level====");
     }
 
     @Override
@@ -33,7 +33,7 @@ public class Goat extends Animal {
 
     @Override
     public boolean isHungry() {
-        return this.energyLevel < HUNGER_TRESHHOLDS;
+        return this.energyLevel < HUNGER_THRESHOLDS;
     }
 
     @Override
@@ -50,8 +50,8 @@ public class Goat extends Animal {
                 }
                 break;
             case REPRODUCE:
-                Point partnerlocation = decisionInfo.nextPos();
-                Animal partnerGoat = world.getAnimalAt(partnerlocation.x, partnerlocation.y);
+                Point partnerLocation = decisionInfo.nextPos();
+                Animal partnerGoat = world.getAnimalAt(partnerLocation.x, partnerLocation.y);
 
                 if (partnerGoat instanceof Goat otherGoat && this.willMate(otherGoat, world.getTotalTicks())) {
                     Animal babyGoat = this.reproduceWithTwo(otherGoat, world.getTotalTicks());
@@ -61,9 +61,11 @@ public class Goat extends Animal {
             case FLEE:
                 Point safeRandomPoint = decisionInfo.nextPos();
                 setPosition(safeRandomPoint, 5);
+                break;
             case WANDER:
                 Point randomMove = decisionInfo.nextPos();
                 setPosition(randomMove, 1);
+                break;
 
         }
     }
