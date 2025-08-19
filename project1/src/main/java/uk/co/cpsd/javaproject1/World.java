@@ -30,7 +30,7 @@ public class World {
         }
 
         for (int j = 0; j < numOfLions; j++) {
-            animals.add(new Lion((int) Math.random() * size, (int) Math.random() * size));
+            animals.add(new Lion((int) (Math.random() * size), (int) (Math.random() * size)));
         }
         this.isGUIMode = isGUIMode;
         this.player = player;
@@ -120,6 +120,7 @@ public class World {
     }
 
     public void tick() {
+        numOfAliveGoats=0;
         List<Animal> babyAnimalHolder = new ArrayList<>();
         List<Animal> removedAnimalsHolder = new ArrayList<>();
         totalTicks++;
@@ -148,12 +149,11 @@ public class World {
                 deadAnimals.add(animal);
                 if(animal instanceof Goat){
                     numOfDeadGoats++;
-                    System.out.println("--------->Goat died: "+ animal.animalId);
-                }
+               }
 
             }
             if (animal instanceof Goat) {
-                numOfAliveGoats++;
+               numOfAliveGoats++;
             }
             animal.act(this, babyAnimalHolder, removedAnimalsHolder);
         }
@@ -161,6 +161,7 @@ public class World {
         animals.addAll(babyAnimalHolder);
         animals.removeAll(deadAnimals);
         animals.removeAll(removedAnimalsHolder);
+
     }
 
     public Map<Point, List<Object>> scanNeighbour(int x, int y) {
