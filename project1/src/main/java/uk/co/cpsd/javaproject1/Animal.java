@@ -104,29 +104,12 @@ public abstract class Animal {
         this.lastReproductionTick = tick;
     }
 
-    // public boolean isFertile(Animal otherAnimal, int currentTick) {
-    // if (otherAnimal == this)
-    // return false;
-
-    // boolean oppositeGender = this.getGender() != otherAnimal.getGender();
-    // boolean pairsHaveEnergy = this.energyLevel >=
-    // getReproductionEnergyCost(this.gender)
-    // && otherAnimal.energyLevel >= getReproductionEnergyCost(otherAnimal.gender);
-    // boolean sinceLastReproduce = currentTick - this.lastReproductionTick >=
-    // getReproductionCooldown(this.gender)
-    // && currentTick - otherAnimal.lastReproductionTick >=
-    // getReproductionCooldown(otherAnimal.gender);
-    // boolean isFertile = oppositeGender && pairsHaveEnergy && sinceLastReproduce;
-    // return isFertile;
-
-    // }
-
     public boolean willMate(Animal otherAnimal, int currentTick) {
 
-        boolean bothAnimalHaveEenergy = this.isFertile(currentTick) && otherAnimal.isFertile(currentTick);
+        boolean bothAnimalHaveEnergy = this.isFertile(currentTick) && otherAnimal.isFertile(currentTick);
         boolean isOppositeGender = this.gender != otherAnimal.gender;
 
-        return bothAnimalHaveEenergy && isOppositeGender;
+        return bothAnimalHaveEnergy && isOppositeGender;
     }
 
     public abstract boolean isFertile(int tick);
