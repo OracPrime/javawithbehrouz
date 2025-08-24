@@ -15,10 +15,14 @@ public class Goat extends Animal {
 
     public final int HUNGER_THRESHOLDS = 30;
     public final int GOAT_MAX_AGE = 60;
+    private  double fleeingPower;
 
     public Goat(int x, int y) {
         super(x, y, 40);
         this.setLastReproductionTick(0);
+        Random random=new Random();
+        dna.put("fleeingPower",7.0+random.nextDouble()*2-1);
+        fleeingPower=dna.getOrDefault("fleeingPower",8.0);
     }
 
     public void eatGrass() {
@@ -112,7 +116,7 @@ public class Goat extends Animal {
              if(hasLion){
                  score-=10;
              }else{
-                 score+=5;
+                 score+=fleeingPower;
              }
 
              if(score>bestScore){
@@ -197,9 +201,15 @@ public class Goat extends Animal {
         return new Goat(x, y);
     }
 
+//    @Override
+//    public int getReproductionCooldown(Gender gender) {
+//        return gender == Gender.FEMALE ? 4 : 2;
+//    }
+
     @Override
     public int getReproductionCooldown(Gender gender) {
-        return gender == Gender.FEMALE ? 4 : 2;
+        int baseCooldown = gender == Gender.FEMALE ? 4 : 2;
+        return (int)(baseCooldown / (reproductionPower / 5.0));
     }
 
     public boolean hasReachedEndOfLife() {
