@@ -99,7 +99,29 @@ public class Goat extends Animal {
             }
         }
 
-        // 4. Default: Random move
+        //4. Score tiles for wandering (grass=8 , safe tile preferred, lion=-10)
+         Point bestMove=null;
+        double bestScore=-1;
+        for(Map.Entry<Point,List<Object>> entry:scanedNeighbourHoodByGoat.entrySet()){
+             double score=0;
+             List<Object> objectsAtTile=entry.getValue();
+             if(objectsAtTile.contains("grass")){
+                 score+=8;
+             }
+             boolean hasLion= objectsAtTile.stream().anyMatch(obj->obj instanceof  Lion);
+             if(hasLion){
+                 score-=10;
+             }else{
+                 score+=5;
+             }
+
+             if(score>bestScore){
+                 bestMove=entry.getKey();
+             }
+        }
+
+
+        // 5. Default: Random move
         Point randomMove = findRandomPos(scanedNeighbourHoodByGoat);
         return new DecisionInfo(DecisionType.WANDER, randomMove);
     }
