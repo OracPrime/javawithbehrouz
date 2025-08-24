@@ -12,12 +12,16 @@ import uk.co.cpsd.javaproject1.DecisionInfo.DecisionType;
 public class Lion extends Animal {
 
     public final int HUNGER_THRESHOLDS = 40;
-    private static final int Lion_MAX_AGE = 50;
+    private static final int Lion_MAX_AGE = 45;
+    private double huntingPower; // specific trait for Lions
 
     public static int numOfEatenGoats = 0;
 
     public Lion(int x, int y) {
         super(x, y, 40);
+        Random random=new Random();
+        dna.put("huntingPower",8.0+random.nextDouble()*3-1);
+        huntingPower=dna.getOrDefault("huntingPower",8.0);
     }
 
     @Override
@@ -62,14 +66,13 @@ public class Lion extends Animal {
             double score = 0;
             for (Object obj : entry.getValue()) {
                 if (obj instanceof Goat) {
-                    score += 10; // Affinity for goats
+//                    score += 10; // Affinity for goats
+                    score+=huntingPower;
                 } else if (obj instanceof Lion) {
                     score += 5;  // Affinity for other lions
                 }
             }
 
-//            System.out.println("Lion ID " + getId() + " at (" + getX() + "," + getY() + ") scores tile (" +
-//                    entry.getKey().x + "," + entry.getKey().y + ") with score: " + score);
             if (score > bestScore) {
                 bestScore = score;
                 bestMove = entry.getKey();
@@ -158,13 +161,13 @@ public class Lion extends Animal {
     }
 
     public double getHuntingChance(int numOfAliveGoats) {
-        if (numOfAliveGoats <= 10)
-            return 0.1;
-        if (numOfAliveGoats <= 15)
-            return 0.3;
-        if (numOfAliveGoats <= 30)
-            return 0.8;
-        return 0.95;
+        double baseChance;
+        if (numOfAliveGoats <= 10) baseChance = 0.0;
+        else if (numOfAliveGoats <= 15) baseChance = 0.3;
+        else if (numOfAliveGoats <= 25) baseChance = 0.6;
+        else if (numOfAliveGoats <= 30) baseChance = 0.8;
+        else baseChance = 0.95;
+        return baseChance * (huntingPower / 9.5);
     }
 
     public boolean attemptHunting(int numOfAliveGoats) {
@@ -176,6 +179,12 @@ public class Lion extends Animal {
         return gender == Gender.FEMALE ? 10 : 7;
     };
 
+    public int getReproductionCooldown(Gender gender) {
+        // Use reproductionPower to adjust cooldown
+        int baseCooldown = gender == Gender.FEMALE ? 10 : 5;
+        return (int)(baseCooldown / (reproductionPower) / 5.0);
+    }
+
     public Animal createBaby(int x, int y) {
         return new Lion(x, y);
     };
@@ -184,9 +193,9 @@ public class Lion extends Animal {
         return 30;
     };
 
-    public int getReproductionCooldown(Gender gender) {
-        return gender == Gender.FEMALE ? 10 : 5;
-    };
+//    public int getReproductionCooldown(Gender gender) {
+//        return gender == Gender.FEMALE ? 10 : 5;
+//    };
 
     @Override
     public boolean isFertile(int currentTick) {
