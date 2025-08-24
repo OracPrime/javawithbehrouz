@@ -11,18 +11,18 @@ import uk.co.cpsd.javaproject1.DecisionInfo.DecisionType;
 
 public class Lion extends Animal {
 
-    public final int HUNGER_TRESHHOLDS = 50;
-    private static final int Lion_MAX_AGE = 60;
+    public final int HUNGER_THRESHOLDS = 40;
+    private static final int Lion_MAX_AGE = 50;
 
     public static int numOfEatenGoats = 0;
 
     public Lion(int x, int y) {
-        super(x, y, 20);
+        super(x, y, 40);
     }
 
     @Override
     public boolean isHungry() {
-        return energyLevel <= HUNGER_TRESHHOLDS;
+        return energyLevel <= HUNGER_THRESHOLDS;
     }
 
     @Override
@@ -33,11 +33,11 @@ public class Lion extends Animal {
     @Override
     public DecisionInfo animalDecisionMaking(World world) {
 
-        Map<Point, List<Object>> scanedNeighbourHoodByLion = world.scanNeighbour(getX(), getY());
+        Map<Point, List<Object>> scannedNeighbourHoodByLion = world.scanNeighbour(getX(), getY());
 
         // 1. Priority: Eat if hungry
         if (isHungry()) {
-            for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByLion.entrySet()) {
+            for (Map.Entry<Point, List<Object>> entry : scannedNeighbourHoodByLion.entrySet()) {
                 for (Object obj : entry.getValue()) {
                     if (obj instanceof Goat) {
                         return new DecisionInfo(DecisionType.EAT, entry.getKey());
@@ -47,7 +47,7 @@ public class Lion extends Animal {
         }
 
         // 2. Priority: Reproduce (check nearby lions)
-        for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByLion.entrySet()) {
+        for (Map.Entry<Point, List<Object>> entry : scannedNeighbourHoodByLion.entrySet()) {
             for (Object obj : entry.getValue()) {
                 if (obj instanceof Lion otherLion && this.willMate(otherLion, world.getTotalTicks())) {
                     return new DecisionInfo(DecisionType.REPRODUCE, entry.getKey());
@@ -55,10 +55,31 @@ public class Lion extends Animal {
             }
         }
 
-        // 3. Default: Stay in place or Random move
-        boolean moveChance = Math.random() < 0.25;
+        // 3. New: Score tiles based on affinities (goat=10, lion=5)
+        Point bestMove = null;
+        double bestScore = -1;
+        for (Map.Entry<Point, List<Object>> entry : scannedNeighbourHoodByLion.entrySet()) {
+            double score = 0;
+            for (Object obj : entry.getValue()) {
+                if (obj instanceof Goat) {
+                    score += 10; // Affinity for goats
+                } else if (obj instanceof Lion) {
+                    score += 5;  // Affinity for other lions
+                }
+            }
+
+//            System.out.println("Lion ID " + getId() + " at (" + getX() + "," + getY() + ") scores tile (" +
+//                    entry.getKey().x + "," + entry.getKey().y + ") with score: " + score);
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = entry.getKey();
+            }
+        }
+
+        // 4. Default: Stay in place or Random move
+        boolean moveChance = Math.random() < 0.2;
         if (moveChance) {
-            Point randomMove = findRandomPos(scanedNeighbourHoodByLion);
+            Point randomMove = findRandomPos(scannedNeighbourHoodByLion);
             return new DecisionInfo(DecisionType.WANDER, randomMove);
         } else {
             Point sameLocation = new Point(getX(), getY());
@@ -76,7 +97,7 @@ public class Lion extends Animal {
     }
 
     public void eatGoat() {
-        this.energyLevel += 20;
+        this.energyLevel += 40;
         numOfEatenGoats++;
         // RoarPlayer.playSound("/roar.wav");
 
@@ -95,7 +116,7 @@ public class Lion extends Animal {
                     if (successfulHunt) {
                         eatGoat();
                         world.removeAnimal(nextPos.x, nextPos.y, removedAnimalsHolder);
-                        setPosition(nextPos, 5);
+                        setPosition(nextPos, 3);
                     } else {
                         Point samePosition = new Point(this.getX(), this.getY());
                         setPosition(samePosition, 5);
@@ -132,19 +153,18 @@ public class Lion extends Animal {
     }
 
     public boolean hasReachedEndOfLife() {
+        System.out.println("-------LION reached end of its life-------------");
         return this.getAge() > Lion_MAX_AGE;
     }
 
     public double getHuntingChance(int numOfAliveGoats) {
         if (numOfAliveGoats <= 10)
-            return 0.0;
+            return 0.1;
         if (numOfAliveGoats <= 15)
             return 0.3;
-        if (numOfAliveGoats <= 25)
-            return 0.6;
         if (numOfAliveGoats <= 30)
             return 0.8;
-        return 1.0;
+        return 0.95;
     }
 
     public boolean attemptHunting(int numOfAliveGoats) {
@@ -153,7 +173,7 @@ public class Lion extends Animal {
     }
 
     public int getReproductionEnergyCost(Gender gender) {
-        return gender == Gender.FEMALE ? 15 : 10;
+        return gender == Gender.FEMALE ? 10 : 7;
     };
 
     public Animal createBaby(int x, int y) {
@@ -161,7 +181,7 @@ public class Lion extends Animal {
     };
 
     public int getInitialBabyEnergy() {
-        return 20;
+        return 30;
     };
 
     public int getReproductionCooldown(Gender gender) {
