@@ -1,8 +1,11 @@
 package uk.co.cpsd.javaproject1;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.List;
 import java.awt.Point;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Animal {
@@ -14,6 +17,11 @@ public abstract class Animal {
     protected int lastReproductionTick = -1;
     private int age = 0;
     protected Point position;
+    protected Map<String,Double> dna; // DNA carries animal traits and makes it easy for newborns to inherit their parents' traits
+    private int generation; // define generation of the animal ,
+    protected double speed; // common traits among all Species
+    protected double reprodcuctionPower; // common traits among all Species
+
 
     private final Gender gender;
 
@@ -36,6 +44,14 @@ public abstract class Animal {
         this.energyLevel = energyLevel;
         this.gender = Math.random() < .5 ? Gender.MALE : Gender.FEMALE;
         this.animalId = idCounter.getAndIncrement();
+        dna=new HashMap<String,Double>();
+        Random random=new Random();
+        dna.put("reproductionPower",5+random.nextDouble()*2);
+        dna.put("speed",5+random.nextDouble()*2);
+        reprodcuctionPower=dna.getOrDefault("reproductionPower",5.0);
+        speed=dna.getOrDefault("speed",5.0);
+        generation=1;
+
     }
 
     public Gender getGender() {
