@@ -18,9 +18,9 @@ public abstract class Animal {
     private int age = 0;
     protected Point position;
     protected Map<String,Double> dna; // DNA carries animal traits and makes it easy for newborns to inherit their parents' traits
-    private int generation; // define generation of the animal ,
+    protected int generation; // define generation of the animal ,
     protected double speed; // common traits among all Species
-    protected double reprodcuctionPower; // common traits among all Species
+    protected double reproductionPower; // common traits among all Species
 
 
     private final Gender gender;
@@ -48,7 +48,7 @@ public abstract class Animal {
         Random random=new Random();
         dna.put("reproductionPower",5+random.nextDouble()*2);
         dna.put("speed",5+random.nextDouble()*2);
-        reprodcuctionPower=dna.getOrDefault("reproductionPower",5.0);
+        reproductionPower =dna.getOrDefault("reproductionPower",5.0);
         speed=dna.getOrDefault("speed",5.0);
         generation=1;
 
