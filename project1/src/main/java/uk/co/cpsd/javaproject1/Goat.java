@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import uk.co.cpsd.javaproject1.DecisionInfo.DecisionType;
 
@@ -21,13 +20,15 @@ public class Goat extends Animal {
         super(x, y, 40);
         this.setLastReproductionTick(0);
         Random random=new Random();
-        dna.put("fleeingPower",7.0+random.nextDouble()*2-1);
+        if (!dna.containsKey("fleeingPower")) {
+            dna.put("fleeingPower", 7.0 + new Random().nextDouble() * 2 - 1); // Random 6-8
+        }
         fleeingPower=dna.getOrDefault("fleeingPower",8.0);
     }
 
     public void eatGrass() {
         this.energyLevel += 20;
-        System.out.println(energyLevel+"<=====Energy level====");
+//        System.out.println(energyLevel+"<=====Energy level====");
     }
 
     @Override
@@ -58,7 +59,7 @@ public class Goat extends Animal {
                 Animal partnerGoat = world.getAnimalAt(partnerLocation.x, partnerLocation.y);
 
                 if (partnerGoat instanceof Goat otherGoat && this.willMate(otherGoat, world.getTotalTicks())) {
-                    Animal babyGoat = this.reproduceWithTwo(otherGoat, world.getTotalTicks());
+                    Animal babyGoat = this.reproduceWith(otherGoat, world.getTotalTicks());
                     babyAnimalHolder.add(babyGoat);
                 }
                 break;
@@ -77,17 +78,17 @@ public class Goat extends Animal {
     @Override
     public DecisionInfo animalDecisionMaking(World world) {
 
-        Map<Point, List<Object>> scanedNeighbourHoodByGoat = world.scanNeighbour(getX(), getY());
+        Map<Point, List<Object>> scannedNeighbourHoodByGoat = world.scanNeighbour(getX(), getY());
 
         // 1. Priority: Flee from danger
-        Point safe = findRandomSafePos(scanedNeighbourHoodByGoat);
+        Point safe = findRandomSafePos(scannedNeighbourHoodByGoat);
         if (!safe.equals(new Point(getX(), getY()))) {
             return new DecisionInfo(DecisionType.FLEE, safe);
         }
 
         // 2. Priority: Eat if hungry
         if (isHungry()) {
-            for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByGoat.entrySet()) {
+            for (Map.Entry<Point, List<Object>> entry : scannedNeighbourHoodByGoat.entrySet()) {
                 if (entry.getValue().contains("grass")) {
                     return new DecisionInfo(DecisionType.EAT, entry.getKey());
                 }
@@ -95,7 +96,7 @@ public class Goat extends Animal {
         }
 
         // 3. Priority: Reproduce (check nearby goats)
-        for (Map.Entry<Point, List<Object>> entry : scanedNeighbourHoodByGoat.entrySet()) {
+        for (Map.Entry<Point, List<Object>> entry : scannedNeighbourHoodByGoat.entrySet()) {
             for (Object obj : entry.getValue()) {
                 if (obj instanceof Goat otherGoat && this.willMate(otherGoat, world.getTotalTicks())) {
                     return new DecisionInfo(DecisionType.REPRODUCE, entry.getKey());
@@ -106,7 +107,7 @@ public class Goat extends Animal {
         //4. Score tiles for wandering (grass=8 , safe tile preferred, lion=-10)
          Point bestMove=null;
         double bestScore=-1;
-        for(Map.Entry<Point,List<Object>> entry:scanedNeighbourHoodByGoat.entrySet()){
+        for(Map.Entry<Point,List<Object>> entry:scannedNeighbourHoodByGoat.entrySet()){
              double score=0;
              List<Object> objectsAtTile=entry.getValue();
              if(objectsAtTile.contains("grass")){
@@ -118,15 +119,20 @@ public class Goat extends Animal {
              }else{
                  score+=fleeingPower;
              }
-
+            for (Object obj : objectsAtTile) {
+                if (obj instanceof Goat) {
+                    score += 6; // Preference to stay near other goats
+                }
+            }
              if(score>bestScore){
+                 bestScore=score;
                  bestMove=entry.getKey();
              }
         }
 
 
         // 5. Default: Random move
-        Point randomMove = findRandomPos(scanedNeighbourHoodByGoat);
+        Point randomMove = findRandomPos(scannedNeighbourHoodByGoat);
         return new DecisionInfo(DecisionType.WANDER, randomMove);
     }
 
