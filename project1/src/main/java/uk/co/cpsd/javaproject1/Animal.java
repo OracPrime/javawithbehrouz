@@ -18,9 +18,11 @@ public abstract class Animal {
     private int age = 0;
     protected Point position;
     protected Map<String,Double> dna; // DNA carries animal traits and makes it easy for newborns to inherit their parents' traits
-    protected int generation; // define generation of the animal ,
+    protected double generation; // define generation of the animal ,
     protected double speed; // common traits among all Species
     protected double reproductionPower; // common traits among all Species
+
+    Random random=new Random();
 
 
     private final Gender gender;
@@ -44,14 +46,18 @@ public abstract class Animal {
         this.energyLevel = energyLevel;
         this.gender = Math.random() < .5 ? Gender.MALE : Gender.FEMALE;
         this.animalId = idCounter.getAndIncrement();
-        dna=new HashMap<String,Double>();
-        Random random=new Random();
-        dna.put("reproductionPower",5+random.nextDouble()*2);
-        dna.put("speed",5+random.nextDouble()*2);
-        reproductionPower =dna.getOrDefault("reproductionPower",5.0);
-        speed=dna.getOrDefault("speed",5.0);
-        generation=1;
 
+        // Initialize DNA only if not set (for babies)
+        if (dna == null) {
+            dna = new HashMap<>();
+            dna.put("reproductionPower", 5.0 + random.nextDouble() * 2); // Random 5-7
+            dna.put("speed", 5.0 + random.nextDouble() * 2); // Random 5-7
+            dna.put("generation", 1.0); // Initial animals are Gen 1
+            dna.put("animalId", (double) animalId);
+        }
+
+        reproductionPower = dna.getOrDefault("reproductionPower", 5.0);
+        speed=dna.getOrDefault("speed",5.0);
     }
 
     public Gender getGender() {
@@ -91,7 +97,7 @@ public abstract class Animal {
         this.position = new Point(point); // returns a copy
     }
 
-    public Animal reproduceWithTwo(Animal partner, int currentTick) {
+    public Animal reproduceWith(Animal partner, int currentTick) {
         // both animals are of the same species
         if (!this.getClass().equals(partner.getClass())) {
             throw new IllegalArgumentException("Animals must be of the same species to reproduce.");
@@ -105,8 +111,30 @@ public abstract class Animal {
         this.energyLevel -= getReproductionEnergyCost(this.gender);
         partner.energyLevel -= getReproductionEnergyCost(partner.gender);
 
+        Map<String,Double> babyDNA=new HashMap<>();
+
+        for(String key:dna.keySet()){
+            if(!key.equals("generation")&& !key.equals("animalId")){
+                double parent1Value=dna.getOrDefault(key,5.0);
+                double parent2Value=dna.getOrDefault(key,5.0);
+                double avgValue=(parent1Value+parent2Value)/2;
+                if(random.nextDouble()<0.1){
+                        avgValue+=random.nextGaussian()*1;
+                        avgValue=Math.max(0,Math.min(avgValue,12));
+                    }
+                babyDNA.put(key,avgValue);
+                }
+
+        }
+
+        double parent1Gen=this.dna.get("generation");
+        double parent2Gen=partner.dna.get("generation");
+        babyDNA.put("generation",Math.max(parent1Gen,parent2Gen)+1);
+
         // Create baby
         Animal baby = createBaby(this.position.x, this.position.y);
+        babyDNA.put("animalId", (double) animalId);
+        baby.dna=babyDNA;
         baby.energyLevel = getInitialBabyEnergy();
 
         return baby;
