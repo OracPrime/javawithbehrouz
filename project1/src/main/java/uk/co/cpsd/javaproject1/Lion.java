@@ -20,7 +20,10 @@ public class Lion extends Animal {
     public Lion(int x, int y) {
         super(x, y, 40);
         Random random=new Random();
-        dna.put("huntingPower",8.0+random.nextDouble()*3-1);
+        if (!dna.containsKey("huntingPower")) {
+            dna.put("huntingPower", 7.0 + new Random().nextDouble() * 3); // Random 7-10
+        }
+
         huntingPower=dna.getOrDefault("huntingPower",8.0);
     }
 
@@ -123,7 +126,7 @@ public class Lion extends Animal {
                     } else {
                         Point samePosition = new Point(this.getX(), this.getY());
                         setPosition(samePosition, 5);
-                        System.out.println("=============Hunting failed=============");
+//                        System.out.println("=============Hunting failed=============");
                     }
 
                 }
@@ -134,7 +137,7 @@ public class Lion extends Animal {
                         .getAnimalAt(partnerlocation.x, partnerlocation.y);
 
                 if (partnerLion instanceof Lion otherLion && this.willMate(otherLion, world.getTotalTicks())) {
-                    Animal babyLion = this.reproduceWithTwo(otherLion, world.getTotalTicks());
+                    Animal babyLion = this.reproduceWith(otherLion, world.getTotalTicks());
                     babyAnimalHolder.add(babyLion);
                 }
             }
@@ -156,7 +159,7 @@ public class Lion extends Animal {
     }
 
     public boolean hasReachedEndOfLife() {
-        System.out.println("-------LION reached end of its life-------------");
+//        System.out.println("-------LION reached end of its life-------------");
         return this.getAge() > Lion_MAX_AGE;
     }
 
@@ -192,10 +195,6 @@ public class Lion extends Animal {
     public int getInitialBabyEnergy() {
         return 30;
     };
-
-//    public int getReproductionCooldown(Gender gender) {
-//        return gender == Gender.FEMALE ? 10 : 5;
-//    };
 
     @Override
     public boolean isFertile(int currentTick) {
